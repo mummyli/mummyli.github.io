@@ -93,15 +93,16 @@
 
 
 
-<meta name="description" content="不务正业的CODER，当了一个假的DBA">
-<meta property="og:type" content="website">
-<meta property="og:title" content="木乃伊、">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：dropDuplicates(scala.collection.Seq&amp;lt;String&amp;gt; colNames)、dropDuplicates(String[] colNames)、dropDuplicates(String col1, scala.collection.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dataset根据指定列去重保留最后一条数据">
+<meta property="og:url" content="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="不务正业的CODER，当了一个假的DBA">
+<meta property="og:description" content="单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：dropDuplicates(scala.collection.Seq&amp;lt;String&amp;gt; colNames)、dropDuplicates(String[] colNames)、dropDuplicates(String col1, scala.collection.">
+<meta property="og:updated_time" content="2017-09-03T01:35:23.582Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="木乃伊、">
-<meta name="twitter:description" content="不务正业的CODER，当了一个假的DBA">
+<meta name="twitter:title" content="Dataset根据指定列去重保留最后一条数据">
+<meta name="twitter:description" content="单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：dropDuplicates(scala.collection.Seq&amp;lt;String&amp;gt; colNames)、dropDuplicates(String[] colNames)、dropDuplicates(String col1, scala.collection.">
 
 
 
@@ -129,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/"/>
 
 
 
 
 
-  <title>木乃伊、</title>
+  <title>Dataset根据指定列去重保留最后一条数据 | 木乃伊、</title>
   
 
 
@@ -160,9 +161,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -265,9 +264,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -293,9 +292,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/03/Dataset根据指定列去重保留最后一条数据/" itemprop="url">Dataset根据指定列去重保留最后一条数据</a></h1>
+          <h1 class="post-title" itemprop="name headline">Dataset根据指定列去重保留最后一条数据</h1>
         
 
         <div class="post-meta">
@@ -342,28 +339,34 @@
       
 
       
+        <p>单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：<code>dropDuplicates(scala.collection.Seq&lt;String&gt; colNames)</code>、<code>dropDuplicates(String[] colNames)</code>、<code>dropDuplicates(String col1, scala.collection.Seq&lt;String&gt; cols)</code>、<code>dropDuplicates(String col1, String... cols)</code>，返回值都是去重后的新的Dataset<t>。但是有时候我们需要根据指定列去重后保留最后一条数据，采用dropDuplicate()方法就无法实现了。这时候我们可以将指定的列作为key（如果值过长，可以对其进行HASH，进行压缩映射），转换原数据为mapPartionsRDD，然后再reduceByKey进行去重，保留最后的一条数据。<br><a id="more"></a><br><strong>java版实现:</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> String[] keys = view.getPrimKeys();<span class="comment">//获取主键  </span></div><div class="line">JavaPairRDD&lt;String, Row&gt; reducePairRDD = viewRDD.toJavaRDD().mapToPair(  </div><div class="line">    <span class="keyword">new</span> PairFunction&lt;Row, String, Row&gt;() &#123;  </div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Tuple2&lt;String, Row&gt; <span class="title">call</span><span class="params">(Row row)</span> <span class="keyword">throws</span> Exception </span>&#123;  </div><div class="line">            String key = <span class="string">""</span>;  </div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; keys.length; i++) &#123;  </div><div class="line">                key += row.getAs(keys[i]);  </div><div class="line">            &#125;  </div><div class="line"></div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;String, Row&gt;(key, row);  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">).reduceByKey(<span class="keyword">new</span> Function2&lt;Row, Row, Row&gt;() &#123;  </div><div class="line">	<span class="function"><span class="keyword">public</span> Row <span class="title">call</span><span class="params">(Row row, Row row2)</span> <span class="keyword">throws</span> Exception </span>&#123;  </div><div class="line">	<span class="keyword">return</span> row2;</div><div class="line">	&#125;</div><div class="line">	&#125;).values;</div></pre></td></tr></table></figure></t></p>
+<p><strong>scala版实现：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val unRdd = ds.rdd.map(line=&gt;((line.getAs[String](<span class="string">"col1"</span>)+line.getAs[String](<span class="string">"col2"</span>)),line)).reduceByKey((x,y)=&gt;y,<span class="number">6</span>).map(_._2)</div></pre></td></tr></table></figure></p>
+<p>在对Dataset转换成mapPartitionsRDD时也可以使用keyBy():<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">keyBy()</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;U&gt; <span class="function">JavaPairRDD&lt;U,T&gt; <span class="title">keyBy</span><span class="params">(Function&lt;T,U&gt; f)</span></span></div></pre></td></tr></table></figure></p>
+<p>对于keyBy()和mapToPair()两个方法的本质并没有区别:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//mapToPair实现源码</span></div><div class="line">def mapToPair[K2, V2](f: PairFunction[T, K2, V2]): JavaPairRDD[K2, V2] = &#123;</div><div class="line">	def cm: ClassTag[(K2, V2)] = implicitly[ClassTag[(K2, V2)]]</div><div class="line">	<span class="keyword">new</span> JavaPairRDD(rdd.map[(K2, V2)](f)(cm))(fakeClassTag[K2], fakeClassTag[V2])</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//keyBy()实现源码</span></div><div class="line">def keyBy[U](f: JFunction[T, U]): JavaPairRDD[U, T] = &#123;  </div><div class="line">	implicit val ctag: ClassTag[U] = fakeClassTag  </div><div class="line">	JavaPairRDD.fromRDD(rdd.keyBy(f))  </div><div class="line">&#125; </div><div class="line"><span class="comment">//它会调用下面的keyBy方法  </span></div><div class="line">def keyBy[K](f: T =&gt; K): RDD[(K, T)] = withScope &#123;  </div><div class="line"> 	val cleanedF = sc.clean(f)  </div><div class="line"> 	map(x =&gt; (cleanedF(x), x))  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到两个方法都是使用rdd.map方法来生成新的RDD。</p>
+
+      
+    </div>
+
+    <div>
+      
         
-          <p>单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：<code>dropDuplicates(scala.collection.Seq&lt;String&gt; colNames)</code>、<code>dropDuplicates(String[] colNames)</code>、<code>dropDuplicates(String col1, scala.collection.Seq&lt;String&gt; cols)</code>、<code>dropDuplicates(String col1, String... cols)</code>，返回值都是去重后的新的Dataset<t>。但是有时候我们需要根据指定列去重后保留最后一条数据，采用dropDuplicate()方法就无法实现了。这时候我们可以将指定的列作为key（如果值过长，可以对其进行HASH，进行压缩映射），转换原数据为mapPartionsRDD，然后再reduceByKey进行去重，保留最后的一条数据。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/09/03/Dataset根据指定列去重保留最后一条数据/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
-      
-    </div>
-
-    <div>
       
     </div>
 
@@ -371,21 +374,22 @@
       
 
       
+      
+      
 
       
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -393,6 +397,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -570,10 +578,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
