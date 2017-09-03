@@ -93,15 +93,16 @@
 
 
 
-<meta name="description" content="不务正业的CODER，当了一个假的DBA">
-<meta property="og:type" content="website">
+<meta name="description" content="OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。1、配置内核参数（root用户）vim /etc/sysctl.confkernel.shmmax = 784676864kernel.shmall = 153257kernel.shmmni = 4096kernel.sem = 250 32000 100">
+<meta property="og:type" content="article">
 <meta property="og:title" content="木乃伊、">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/2017/09/03/test/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="不务正业的CODER，当了一个假的DBA">
+<meta property="og:description" content="OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。1、配置内核参数（root用户）vim /etc/sysctl.confkernel.shmmax = 784676864kernel.shmall = 153257kernel.shmmni = 4096kernel.sem = 250 32000 100">
+<meta property="og:updated_time" content="2017-09-03T00:04:10.434Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="木乃伊、">
-<meta name="twitter:description" content="不务正业的CODER，当了一个假的DBA">
+<meta name="twitter:description" content="OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。1、配置内核参数（root用户）vim /etc/sysctl.confkernel.shmmax = 784676864kernel.shmall = 153257kernel.shmmni = 4096kernel.sem = 250 32000 100">
 
 
 
@@ -129,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/03/test/"/>
 
 
 
 
 
-  <title>木乃伊、</title>
+  <title> | 木乃伊、</title>
   
 
 
@@ -160,9 +161,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -265,9 +264,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -293,9 +292,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/03/test/" itemprop="url">未命名</a></h1>
+          <h1 class="post-title" itemprop="name headline"></h1>
         
 
         <div class="post-meta">
@@ -342,9 +339,7 @@
       
 
       
-        
-          
-            <p>  OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。<br>1、配置内核参数（root用户）<br>vim /etc/sysctl.conf<br>kernel.shmmax = 784676864<br>kernel.shmall = 153257<br>kernel.shmmni = 4096<br>kernel.sem = 250 32000 100 128<br>net.ipv4.ip_local_port_range = 9000 65500<br>net.core.rmem_default = 4194304<br>net.core.rmem_max = 4194304<br>net.core.wmem_default = 262144<br>net.core.wmem_max = 1048576<br>fs.aio-max-nr = 1048576<br>fs.file-max = 6815744<br>修改后使用sysctl -p使配置生效<br>2、配置资源限制（root用户）<br>vim /etc/security/limits.conf<br>oracle     soft       nproc     2047<br>oracle     hard     nproc     16384<br>oracle     soft     nofile      1024<br>oracle     hard     nofile     65536<br>oracle     soft      stack     10240<br>3、创建用户组和用户组（root用户）<br>groupadd oinstall<br>groupadd dba<br>useradd -m -g oinstall -G dba oracle<br>设置oracle账户口令<br>passwd oracle<br>4、创建目录以及授权（root用户）<br>mkdir -p /home/u01<br>创建软连接绑定<br>ln -s /home/u01 /u01<br>创建对应目录结构<br>mkdir -p /u01/app/oracle<br>指定用户组以及授权<br>chown -R oracle:oinstall /u01/<br>chmod -R 775 /u01/<br>5、配置环境变量（oracle用户）<br>su -oracle切换到oracle用户<br>编辑.bash_profile配置环境变量<br>export ORACLE_BASE=/u01/app<br>export ORACLE_HOME=$ORACLE_BASE/oracle<br>export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib:/usr/local/lib:/usr/X11R6/lib<br>export TNS_ADMIN=$ORACLE_HOME/network/admin<br>export ORA_NLS33=$ORACLE_HOME/ocommon/nls/admin/data<br>export ORACLE_OWNER=oracle<br>export PATH=/usr/kerberos/sbin:/usr/kerberos/bin:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:/usr/bin:/root/bin:$ORACLE_HOME/bin:$PATH<br>编辑完后使用source .bash_profile命令使配置生效<br>6、 配置响应文件<br>在解压后的oracle安装文件夹：database/response目录下有一个响应文件的配置模板，根据需要自行配置即可</p>
+        <p>  OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。<br>1、配置内核参数（root用户）<br>vim /etc/sysctl.conf<br>kernel.shmmax = 784676864<br>kernel.shmall = 153257<br>kernel.shmmni = 4096<br>kernel.sem = 250 32000 100 128<br>net.ipv4.ip_local_port_range = 9000 65500<br>net.core.rmem_default = 4194304<br>net.core.rmem_max = 4194304<br>net.core.wmem_default = 262144<br>net.core.wmem_max = 1048576<br>fs.aio-max-nr = 1048576<br>fs.file-max = 6815744<br>修改后使用sysctl -p使配置生效<br>2、配置资源限制（root用户）<br>vim /etc/security/limits.conf<br>oracle     soft       nproc     2047<br>oracle     hard     nproc     16384<br>oracle     soft     nofile      1024<br>oracle     hard     nofile     65536<br>oracle     soft      stack     10240<br>3、创建用户组和用户组（root用户）<br>groupadd oinstall<br>groupadd dba<br>useradd -m -g oinstall -G dba oracle<br>设置oracle账户口令<br>passwd oracle<br>4、创建目录以及授权（root用户）<br>mkdir -p /home/u01<br>创建软连接绑定<br>ln -s /home/u01 /u01<br>创建对应目录结构<br>mkdir -p /u01/app/oracle<br>指定用户组以及授权<br>chown -R oracle:oinstall /u01/<br>chmod -R 775 /u01/<br>5、配置环境变量（oracle用户）<br>su -oracle切换到oracle用户<br>编辑.bash_profile配置环境变量<br>export ORACLE_BASE=/u01/app<br>export ORACLE_HOME=$ORACLE_BASE/oracle<br>export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib:/usr/local/lib:/usr/X11R6/lib<br>export TNS_ADMIN=$ORACLE_HOME/network/admin<br>export ORA_NLS33=$ORACLE_HOME/ocommon/nls/admin/data<br>export ORACLE_OWNER=oracle<br>export PATH=/usr/kerberos/sbin:/usr/kerberos/bin:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:/usr/bin:/root/bin:$ORACLE_HOME/bin:$PATH<br>编辑完后使用source .bash_profile命令使配置生效<br>6、 配置响应文件<br>在解压后的oracle安装文件夹：database/response目录下有一个响应文件的配置模板，根据需要自行配置即可</p>
 <p>下面是我的install.rsp配置文件，供参考：</p>
 <p>#——————————————————————————-</p>
 <h1 id="Do-not-change-the-following-system-generated-value"><a href="#Do-not-change-the-following-system-generated-value" class="headerlink" title="Do not change the following system generated value."></a>Do not change the following system generated value.</h1><p>#——————————————————————————-<br>oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v12.1.0</p>
@@ -385,20 +380,27 @@
 <h1 id="The-value-can-be-either-true-or-false-If-left-blank-it-will-be-assumed"><a href="#The-value-can-be-either-true-or-false-If-left-blank-it-will-be-assumed" class="headerlink" title="The value can be either true or false. If left blank it will be assumed"></a>The value can be either true or false. If left blank it will be assumed</h1><h1 id="to-be-false"><a href="#to-be-false" class="headerlink" title="to be false."></a>to be false.</h1><p>#</p>
 <h1 id="Example-DECLINE-SECURITY-UPDATES-false"><a href="#Example-DECLINE-SECURITY-UPDATES-false" class="headerlink" title="Example    : DECLINE_SECURITY_UPDATES=false"></a>Example    : DECLINE_SECURITY_UPDATES=false</h1><p>#——————————————————————————<br>DECLINE_SECURITY_UPDATES=true<br>7、最后运行./runInstaller -silent -responsefile /home/oracle/db_install.rsp安装即可。<br>[最后PS：（1）依赖包的检测本应该在一开始就检查的，但是我有一个坏毛病每次都是安装后看它提示缺什么包之后再去安装。<br>                  （2）各系统需要的package的传送门：<a href="http://docs.oracle.com/database/121/LTCQI/toc.htm#CHDJIDDD" target="_blank" rel="external">http://docs.oracle.com/database/121/LTCQI/toc.htm#CHDJIDDD</a><br>                  （3）安装失败时候主要看看日志中先决条件测试那部分的日志，是否所有先决条件测试都success了]</p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
@@ -406,21 +408,22 @@
       
 
       
+      
+      
 
       
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -428,6 +431,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -447,8 +454,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/header.jpg"
@@ -492,6 +508,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Do-not-change-the-following-system-generated-value"><span class="nav-number">1.</span> <span class="nav-text">Do not change the following system generated value.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-installation-option"><span class="nav-number">2.</span> <span class="nav-text">Specify the installation option.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#It-can-be-one-of-the-following"><span class="nav-number">3.</span> <span class="nav-text">It can be one of the following:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#INSTALL-DB-SWONLY"><span class="nav-number">4.</span> <span class="nav-text">- INSTALL_DB_SWONLY</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#INSTALL-DB-AND-CONFIG"><span class="nav-number">5.</span> <span class="nav-text">- INSTALL_DB_AND_CONFIG</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UPGRADE-DB"><span class="nav-number">6.</span> <span class="nav-text">- UPGRADE_DB</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-hostname-of-the-system-as-set-during-the-install-It-can-be-used"><span class="nav-number">7.</span> <span class="nav-text">Specify the hostname of the system as set during the install. It can be used</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#to-force-the-installation-to-use-an-alternative-hostname-rather-than-using-the"><span class="nav-number">8.</span> <span class="nav-text">to force the installation to use an alternative hostname rather than using the</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#first-hostname-found-on-the-system-e-g-for-systems-with-multiple-hostnames"><span class="nav-number">9.</span> <span class="nav-text">first hostname found on the system. (e.g., for systems with multiple hostnames</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#and-network-interfaces"><span class="nav-number">10.</span> <span class="nav-text">and network interfaces)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-Unix-group-to-be-set-for-the-inventory-directory"><span class="nav-number">11.</span> <span class="nav-text">Specify the Unix group to be set for the inventory directory.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-location-which-holds-the-inventory-files"><span class="nav-number">12.</span> <span class="nav-text">Specify the location which holds the inventory files.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#This-is-an-optional-parameter-if-installing-on"><span class="nav-number">13.</span> <span class="nav-text">This is an optional parameter if installing on</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Windows-based-Operating-System"><span class="nav-number">14.</span> <span class="nav-text">Windows based Operating System.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-languages-in-which-the-components-will-be-installed"><span class="nav-number">15.</span> <span class="nav-text">Specify the languages in which the components will be installed.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#en-English-ja-Japanese"><span class="nav-number">16.</span> <span class="nav-text">en   : English                  ja   : Japanese</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fr-French-ko-Korean"><span class="nav-number">17.</span> <span class="nav-text">fr   : French                   ko   : Korean</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ar-Arabic-es-Latin-American-Spanish"><span class="nav-number">18.</span> <span class="nav-text">ar   : Arabic                   es   : Latin American Spanish</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bn-Bengali-lv-Latvian"><span class="nav-number">19.</span> <span class="nav-text">bn   : Bengali                  lv   : Latvian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pt-BR-Brazilian-Portuguese-lt-Lithuanian"><span class="nav-number">20.</span> <span class="nav-text">pt_BR: Brazilian Portuguese     lt   : Lithuanian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bg-Bulgarian-ms-Malay"><span class="nav-number">21.</span> <span class="nav-text">bg   : Bulgarian                ms   : Malay</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fr-CA-Canadian-French-es-MX-Mexican-Spanish"><span class="nav-number">22.</span> <span class="nav-text">fr_CA: Canadian French          es_MX: Mexican Spanish</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ca-Catalan-no-Norwegian"><span class="nav-number">23.</span> <span class="nav-text">ca   : Catalan                  no   : Norwegian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hr-Croatian-pl-Polish"><span class="nav-number">24.</span> <span class="nav-text">hr   : Croatian                 pl   : Polish</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cs-Czech-pt-Portuguese"><span class="nav-number">25.</span> <span class="nav-text">cs   : Czech                    pt   : Portuguese</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#da-Danish-ro-Romanian"><span class="nav-number">26.</span> <span class="nav-text">da   : Danish                   ro   : Romanian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#nl-Dutch-ru-Russian"><span class="nav-number">27.</span> <span class="nav-text">nl   : Dutch                    ru   : Russian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ar-EG-Egyptian-zh-CN-Simplified-Chinese"><span class="nav-number">28.</span> <span class="nav-text">ar_EG: Egyptian                 zh_CN: Simplified Chinese</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#en-GB-English-Great-Britain-sk-Slovak"><span class="nav-number">29.</span> <span class="nav-text">en_GB: English (Great Britain)  sk   : Slovak</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#et-Estonian-sl-Slovenian"><span class="nav-number">30.</span> <span class="nav-text">et   : Estonian                 sl   : Slovenian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fi-Finnish-es-ES-Spanish"><span class="nav-number">31.</span> <span class="nav-text">fi   : Finnish                  es_ES: Spanish</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#de-German-sv-Swedish"><span class="nav-number">32.</span> <span class="nav-text">de   : German                   sv   : Swedish</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#el-Greek-th-Thai"><span class="nav-number">33.</span> <span class="nav-text">el   : Greek                    th   : Thai</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#iw-Hebrew-zh-TW-Traditional-Chinese"><span class="nav-number">34.</span> <span class="nav-text">iw   : Hebrew                   zh_TW: Traditional Chinese</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hu-Hungarian-tr-Turkish"><span class="nav-number">35.</span> <span class="nav-text">hu   : Hungarian                tr   : Turkish</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#is-Icelandic-uk-Ukrainian"><span class="nav-number">36.</span> <span class="nav-text">is   : Icelandic                uk   : Ukrainian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#in-Indonesian-vi-Vietnamese"><span class="nav-number">37.</span> <span class="nav-text">in   : Indonesian               vi   : Vietnamese</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#it-Italian"><span class="nav-number">38.</span> <span class="nav-text">it   : Italian</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#all-langs-All-languages"><span class="nav-number">39.</span> <span class="nav-text">all_langs   : All languages</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-value-as-the-following-to-select-any-of-the-languages"><span class="nav-number">40.</span> <span class="nav-text">Specify value as the following to select any of the languages.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Example-SELECTED-LANGUAGES-en-fr-ja"><span class="nav-number">41.</span> <span class="nav-text">Example : SELECTED_LANGUAGES=en,fr,ja</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-value-as-the-following-to-select-all-the-languages"><span class="nav-number">42.</span> <span class="nav-text">Specify value as the following to select all the languages.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Example-SELECTED-LANGUAGES-all-langs"><span class="nav-number">43.</span> <span class="nav-text">Example : SELECTED_LANGUAGES=all_langs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-complete-path-of-the-Oracle-Home"><span class="nav-number">44.</span> <span class="nav-text">Specify the complete path of the Oracle Home.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-complete-path-of-the-Oracle-Base"><span class="nav-number">45.</span> <span class="nav-text">Specify the complete path of the Oracle Base.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-the-installation-edition-of-the-component"><span class="nav-number">46.</span> <span class="nav-text">Specify the installation edition of the component.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#"><span class="nav-number">47.</span> <span class="nav-text"> </span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-value-should-contain-only-one-of-these-choices"><span class="nav-number">48.</span> <span class="nav-text">The value should contain only one of these choices.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EE-Enterprise-Edition"><span class="nav-number">49.</span> <span class="nav-text">- EE     : Enterprise Edition</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#-1"><span class="nav-number">50.</span> <span class="nav-text">#</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PRIVILEGED-OPERATING-SYSTEM-GROUPS"><span class="nav-number">51.</span> <span class="nav-text">PRIVILEGED OPERATING SYSTEM GROUPS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#——————————————"><span class="nav-number">52.</span> <span class="nav-text">——————————————</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Provide-values-for-the-OS-groups-to-which-OSDBA-and-OSOPER-privileges"><span class="nav-number">53.</span> <span class="nav-text">Provide values for the OS groups to which OSDBA and OSOPER privileges</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#needs-to-be-granted-If-the-install-is-being-performed-as-a-member-of-the"><span class="nav-number">54.</span> <span class="nav-text">needs to be granted. If the install is being performed as a member of the</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#group-“dba”-then-that-will-be-used-unless-specified-otherwise-below"><span class="nav-number">55.</span> <span class="nav-text">group “dba”, then that will be used unless specified otherwise below.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#-2"><span class="nav-number">56.</span> <span class="nav-text">#</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-value-to-be-specified-for-OSDBA-and-OSOPER-group-is-only-for-UNIX-based"><span class="nav-number">57.</span> <span class="nav-text">The value to be specified for OSDBA and OSOPER group is only for UNIX based</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Operating-System"><span class="nav-number">58.</span> <span class="nav-text">Operating System.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#-3"><span class="nav-number">59.</span> <span class="nav-text">#</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-DBA-GROUP-is-the-OS-group-which-is-to-be-granted-OSDBA-privileges"><span class="nav-number">60.</span> <span class="nav-text">The DBA_GROUP is the OS group which is to be granted OSDBA privileges.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-OPER-GROUP-is-the-OS-group-which-is-to-be-granted-OSOPER-privileges"><span class="nav-number">61.</span> <span class="nav-text">The OPER_GROUP is the OS group which is to be granted OSOPER privileges.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-value-to-be-specified-for-OSOPER-group-is-optional"><span class="nav-number">62.</span> <span class="nav-text">The value to be specified for OSOPER group is optional.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-BACKUPDBA-GROUP-is-the-OS-group-which-is-to-be-granted-OSBACKUPDBA-privileges"><span class="nav-number">63.</span> <span class="nav-text">The BACKUPDBA_GROUP is the OS group which is to be granted OSBACKUPDBA privileges.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-DGDBA-GROUP-is-the-OS-group-which-is-to-be-granted-OSDGDBA-privileges"><span class="nav-number">64.</span> <span class="nav-text">The DGDBA_GROUP is the OS group which is to be granted OSDGDBA privileges.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-KMDBA-GROUP-is-the-OS-group-which-is-to-be-granted-OSKMDBA-privileges"><span class="nav-number">65.</span> <span class="nav-text">The KMDBA_GROUP is the OS group which is to be granted OSKMDBA privileges.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Specify-whether-user-doesn’t-want-to-configure-Security-Updates"><span class="nav-number">66.</span> <span class="nav-text">Specify whether user doesn’t want to configure Security Updates.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-value-for-this-variable-should-be-true-if-you-don’t-want-to-configure"><span class="nav-number">67.</span> <span class="nav-text">The value for this variable should be true if you don’t want to configure</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Security-Updates-false-otherwise"><span class="nav-number">68.</span> <span class="nav-text">Security Updates, false otherwise.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-value-can-be-either-true-or-false-If-left-blank-it-will-be-assumed"><span class="nav-number">69.</span> <span class="nav-text">The value can be either true or false. If left blank it will be assumed</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#to-be-false"><span class="nav-number">70.</span> <span class="nav-text">to be false.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Example-DECLINE-SECURITY-UPDATES-false"><span class="nav-number">71.</span> <span class="nav-text">Example    : DECLINE_SECURITY_UPDATES=false</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -605,10 +637,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
