@@ -1,0 +1,776 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java,类型信息,Class,reflect," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;反射可以让我们在运行时动态的加载类，访问、调用类的字段、方法、构造器。反射机制是构建框架的基础，如Spring框架核心，各种RPC框架等。 Class：class的抽象&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;首先我们需要知道在java中，类的信息是由Class对象来描述的，每个类对应一个Clas">
+<meta name="keywords" content="java,类型信息,Class,reflect">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA反射机制">
+<meta property="og:url" content="http://yoursite.com/2017/09/06/JAVA反射简介/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;反射可以让我们在运行时动态的加载类，访问、调用类的字段、方法、构造器。反射机制是构建框架的基础，如Spring框架核心，各种RPC框架等。 Class：class的抽象&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;首先我们需要知道在java中，类的信息是由Class对象来描述的，每个类对应一个Clas">
+<meta property="og:updated_time" content="2017-09-07T14:03:09.657Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAVA反射机制">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;反射可以让我们在运行时动态的加载类，访问、调用类的字段、方法、构造器。反射机制是构建框架的基础，如Spring框架核心，各种RPC框架等。 Class：class的抽象&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;首先我们需要知道在java中，类的信息是由Class对象来描述的，每个类对应一个Clas">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/06/JAVA反射简介/"/>
+
+
+
+
+
+  <title>JAVA反射机制 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/06/JAVA反射简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JAVA反射机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-06T22:13:32+08:00">
+                2017-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaSE/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaSE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;反射可以让我们在运行时动态的加载类，访问、调用类的字段、方法、构造器。反射机制是构建框架的基础，如Spring框架核心，各种RPC框架等。</p>
+<h3 id="Class：class的抽象"><a href="#Class：class的抽象" class="headerlink" title="Class：class的抽象"></a>Class：class的抽象</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先我们需要知道在java中，类的信息是由Class对象来描述的，每个类对应一个Class对象，它表示一个类或者接口（一个annotation也算是一个接口）在运行时的类型信息。Class只有一个private的构造器，你并不能手动的去创建它，Class对象只能由JVM在加载一个类或者是在调用一个方法的时候去创建它。<br><a id="more"></a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;获取一个类的Class对象有以下几种方式：</p>
+<blockquote>
+<ul>
+<li>Class.forName(String className)</li>
+<li>obj.getClass()</li>
+<li>ClassName.class</li>
+</ul>
+</blockquote>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;相较于forName()的方式，.class方式能获得编译期的检查更加安全。以上三种方式都可以获得类的Class对象，但是他们之间也有一些差别，Class.forName(String className)默认会对这个类进行初始化操作，而.class的方式则不会自动初始化该Class对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Random;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InitObj1</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> value1 = <span class="number">1</span>;<span class="comment">//编译期常量，不需要初始化</span></div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> value2 = <span class="keyword">new</span> Random().nextInt();<span class="comment">//需要初始化</span></div><div class="line"></div><div class="line">    <span class="keyword">static</span>&#123;</div><div class="line">        System.out.println(<span class="string">"static block initializing."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InitObj2</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> value1 = <span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span>&#123;</div><div class="line">        System.out.println(<span class="string">"static block initializing."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassInitTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</div><div class="line"></div><div class="line">        System.out.println(<span class="string">"----通过.class获取Class对象-----"</span>);</div><div class="line">        Class c1 = InitObj1.class;</div><div class="line">        System.out.println(<span class="string">"created c1"</span>);</div><div class="line">        System.out.println(<span class="string">"value1:"</span> + InitObj1.value1);</div><div class="line">        System.out.println(<span class="string">"value2:"</span> + InitObj1.value2);</div><div class="line"></div><div class="line">        System.out.println(<span class="string">"----通过forName获取Class对象-----"</span>);</div><div class="line">        Class c2 = Class.forName(<span class="string">"me.l4j.thinkingInJava.reflectionAPI.InitObj2"</span>);</div><div class="line">        System.out.println(<span class="string">"created c2"</span>);</div><div class="line">        System.out.println(<span class="string">"value1:"</span> + InitObj2.value1);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>输出：<br>—-通过.class获取Class对象—–<br>created c1<br>value1:1<br>static block initializing.<br>value2:-2130950913<br>—-通过forName获取Class对象—–<br>static block initializing.<br>created c2<br>value1:1</p>
+</blockquote>
+<p>从结果可以看到.class获取Class引用不会引发初始化，延迟到了对value2的访问，但是forName()方法会立即引发初始化。</p>
+<h4 id="获取类型信息的简单示例"><a href="#获取类型信息的简单示例" class="headerlink" title="获取类型信息的简单示例"></a>获取类型信息的简单示例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Field;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Method;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Modifier;</div><div class="line"><span class="keyword">import</span> java.util.Arrays;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by lsj on 2017-9-6.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectString</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"></div><div class="line">        Class&lt;?&gt; strC = String.class;</div><div class="line"></div><div class="line">        <span class="comment">//获取类名</span></div><div class="line">        System.out.println(strC.getName());</div><div class="line"></div><div class="line">        <span class="comment">//获取实现的接口</span></div><div class="line">        Class&lt;?&gt;[] inter = strC.getInterfaces();</div><div class="line">        System.out.println(<span class="string">"String implements interfaces："</span>);</div><div class="line">        <span class="keyword">for</span> (Class c : inter)</div><div class="line">            System.out.println(<span class="string">"    --"</span> + c.getName());</div><div class="line"></div><div class="line">        <span class="comment">//getXXX方法只能获取到public，getDeclaredXXX可以获取到所有定义了的元素</span></div><div class="line">        <span class="comment">//获取构造器</span></div><div class="line">        Constructor&lt;?&gt;[] cons = strC.getDeclaredConstructors();</div><div class="line">        System.out.println(<span class="string">"All Constructors:"</span>);</div><div class="line">        <span class="keyword">for</span> (Constructor csr : cons) &#123;</div><div class="line">            System.out.println(<span class="string">"    constructor name:"</span>+csr.getName());</div><div class="line">            System.out.println(<span class="string">"    constructor modifier:"</span> + Modifier.toString(csr.getModifiers()));</div><div class="line">            Arrays.stream(csr.getParameterTypes()).forEach(x-&gt; System.out.println(<span class="string">"    param:"</span>+x.getName()));</div><div class="line"></div><div class="line">            System.out.println(<span class="string">"    ------------------------------------"</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//获取字段</span></div><div class="line">        Field[] fields = strC.getDeclaredFields();</div><div class="line"></div><div class="line">        System.out.println(<span class="string">"All fields:"</span>);</div><div class="line">        <span class="keyword">for</span> (Field f : fields) &#123;</div><div class="line">            System.out.println(<span class="string">"    name:"</span> + f.getName());</div><div class="line">            System.out.println(<span class="string">"    modifier:"</span>+Modifier.toString(f.getModifiers()));</div><div class="line">            System.out.println(<span class="string">"    ------------------------------------"</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line"></div><div class="line">        <span class="comment">//获取方法</span></div><div class="line">        Method[] methods = strC.getDeclaredMethods();</div><div class="line">        System.out.println(<span class="string">"All methods:"</span>);</div><div class="line">        <span class="keyword">for</span> (Method m : methods)&#123;</div><div class="line">            System.out.println(<span class="string">"    name:"</span>+m.getName());</div><div class="line">            System.out.println(<span class="string">"    modifier:"</span>+Modifier.toString(m.getModifiers()));</div><div class="line">            System.out.println(<span class="string">"    returnType:"</span>+m.getReturnType().getName());</div><div class="line">            Arrays.stream(m.getParameterTypes()).forEach(x-&gt; System.out.println(<span class="string">"    param:"</span>+x.getName()));</div><div class="line">            Arrays.stream(m.getAnnotations()).forEach(x-&gt; System.out.println(<span class="string">"    annotation:"</span>+x.annotationType().getName()));</div><div class="line">            System.out.println(<span class="string">"    ------------------------------------"</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// 创建一个String对象cs，向上转型为CharSequence，其类型信息任然是一个String</span></div><div class="line">        CharSequence cs = <span class="keyword">new</span> String(<span class="string">"str"</span>);</div><div class="line">        Class csClass = cs.getClass();</div><div class="line">        System.out.println(csClass.getName());</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="类型判断"><a href="#类型判断" class="headerlink" title="类型判断"></a>类型判断</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对类型的判断主要有istanceof关键字、Class.isInstance(Object obj)方法和”==”三种方式。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.Serializable;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassType</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//String和StringBuilder都实现了CharSequence接口和Serializable接口，将str和sb都向上转型为一个CharSequence</span></div><div class="line">        CharSequence str = <span class="keyword">new</span> String();</div><div class="line">        CharSequence sb = <span class="keyword">new</span> StringBuilder();</div><div class="line"></div><div class="line">        <span class="comment">//istanceof和isInstance()表示这个对象是否是这个类或者接口的实例，即这个对象是否是这个类型</span></div><div class="line">        System.out.println(<span class="string">"str instanceof CharSequence:"</span> + (str <span class="keyword">instanceof</span> CharSequence));</div><div class="line">        System.out.println(<span class="string">"str instanceof String:"</span> + (str <span class="keyword">instanceof</span> String));</div><div class="line">        System.out.println(<span class="string">"str instanceof Serializable:"</span> + (str <span class="keyword">instanceof</span> Serializable));</div><div class="line"></div><div class="line">        System.out.println();</div><div class="line"></div><div class="line">        System.out.println(<span class="string">"CharSequence.class.isInstance(str): "</span>+CharSequence.class.isInstance(str));</div><div class="line">        System.out.println(<span class="string">"String.class.isInstance(str): "</span>+String.class.isInstance(str));</div><div class="line"></div><div class="line">        System.out.println();</div><div class="line"></div><div class="line">        <span class="comment">//==只能与对象实际类型相同时才能返回true</span></div><div class="line">        System.out.println(<span class="string">"String.class == str.getClass(): "</span> + (String.class == str.getClass()));</div><div class="line">        System.out.println(<span class="string">"CharSequence.class == str.getClass(): "</span> + (CharSequence.class == str.getClass()));</div><div class="line"></div><div class="line"></div><div class="line">        <span class="comment">//虽然str和sb都向上转型为CharSequence，但是他们两的实际类型并不相同</span></div><div class="line">        System.out.println(<span class="string">"str.getClass(): "</span>+str.getClass());</div><div class="line">        System.out.println(<span class="string">"sb.getClass(): "</span>+sb.getClass());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>instanceof</code>和<code>isInstance()</code>保持了类型的概念（是否是这个类，或是否是这个类的派生类），而==比较的是实际的class对象。</p>
+<h4 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为知道一只狗一定是一只动物，所以编译器允许自由的向上转型，不需要任何显示的转换。但是一直动物是不是一只狗这是不确定的，在进行“向下转型”的时候需要显式的进行转换<code>(Dog)object</code>,如果这个object并不属于Dog，那么在运行时会触发<code>ClassCastException</code>异常。在进行“向下转型”时我们可以先使用<code>instanceof</code>或者<code>isInstance()</code>进行类型检查，以避免触发异常。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在JAVA SE5开始我们可以使用Class引用的<code>cast()</code>进行转型,暂没有发现这种转型语法的特异功能。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Animal a = <span class="keyword">new</span> Dog();</div><div class="line">Class&lt;?&gt; dogCls = Dog.class;</div><div class="line">Dog d = dogCls.cast(a);</div></pre></td></tr></table></figure></p>
+<h3 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过java反射机制，我们可以动态的创建对象，体现出很大的灵活性。相较于静态编译，通过反射执行的操作要慢得多。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;java在java.lang.reflect包下提供了反射的工具和接口，reflect包只是java反射机制的一部分，其他还包括前面提到的Class类以及Object类等。</p>
+<h4 id="ReflectionAPI简介"><a href="#ReflectionAPI简介" class="headerlink" title="ReflectionAPI简介"></a>ReflectionAPI简介</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在reflect包中Field、Method和Constructor这三个类比较常用。我们可以通过Constrcutor创建新的对象（Class引用的<code>newInstance</code>方法也可以创建对象，但是需要这个类有无参构造器），利用Field中的<code>set()</code>和<code>get()</code>方法来读取和修改字段，以及使用<code>invoke()</code>方法来调用与Method关联的方法。下面的实例展示了这三个类的基本用法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; courses;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(String name, <span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.age = age;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = <span class="string">"John Doe"</span>;</div><div class="line">        <span class="keyword">this</span>.age = -<span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.age = age;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getCourses</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> courses;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCourses</span><span class="params">(List&lt;String&gt; courses)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.courses = courses;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"Student&#123;"</span> +</div><div class="line">                <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</div><div class="line">                <span class="string">", age="</span> + age +</div><div class="line">                <span class="string">", courses="</span> + courses +</div><div class="line">                <span class="string">'&#125;'</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.*;</div><div class="line"><span class="keyword">import</span> java.util.Arrays;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectAPI</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">// 利用泛型的Class来指明这个Class对象为Student的Class对象</span></div><div class="line">        Class&lt;Student&gt; stCls = Student.class;</div><div class="line"></div><div class="line">        <span class="comment">// 利用Class的newInstance()方法，调用无参构造器来创建对象</span></div><div class="line">        Student sDefault = stCls.newInstance();</div><div class="line">        System.out.println(<span class="string">"调用无参构造器创建Student对象： "</span>+sDefault);</div><div class="line"></div><div class="line">        <span class="comment">// 获取带String和int类型参数的构造器</span></div><div class="line">        Constructor ctr = stCls.getConstructor(String.class, <span class="keyword">int</span>.class);</div><div class="line">        Student s = (Student)ctr.newInstance(<span class="string">"john"</span>, <span class="number">20</span>);</div><div class="line">        System.out.println(s);</div><div class="line"></div><div class="line"></div><div class="line">        <span class="comment">// 为s这个对象增加课程</span></div><div class="line">        <span class="comment">// Student中courses字段为private，getField("courses")会触发NoSuchFieldException异常</span></div><div class="line">        <span class="comment">// Field fld = stCls.getField("courses");</span></div><div class="line">        Field fld = stCls.getDeclaredField(<span class="string">"courses"</span>);</div><div class="line"></div><div class="line">        <span class="comment">// 由于courses字段为private的，不设置Field.setAccessible(true)会触发IllegalAccessException异常</span></div><div class="line">        fld.setAccessible(<span class="keyword">true</span>);</div><div class="line">        fld.set(s, Arrays.asList(<span class="string">"计算机网络"</span>,<span class="string">"操作系统"</span>));</div><div class="line">        System.out.println(fld.get(s));</div><div class="line"></div><div class="line">        <span class="comment">// 设置为private的字段，一般来说是不希望你去直接访问它的。</span></div><div class="line">        <span class="comment">// 一种合法的修改这个值的方法就是调用其public的set方法去修改它</span></div><div class="line">        <span class="comment">// 这里使用getMethod()方法去获取修饰为public的方法，如果这个方法为private或者不存在会触发NoSuchFieldException异常</span></div><div class="line">        Method m = stCls.getMethod(<span class="string">"setAge"</span>, <span class="keyword">int</span>.class);</div><div class="line">        m.invoke(s, <span class="number">24</span>);</div><div class="line">        System.out.println(s);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先了解下什么是代理模式：其目的是为其他对象提供一个代理以控制对某个对象的访问。代理类负责为委托类预处理消息，过滤消息并转发消息，以及进行消息被委托类执行后的后续处理。而动态代理可以动态的创建代理并动态的处理对所代理方法的调用。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JDK实现的动态代理只能代理实现了某接口的被代理对象。java动态代理主要用到<code>java.lang.reflect.Proxy</code>类和<code>java.lang.reflect.InvocationHandler</code>接口。动态代理的实现主要包括以下步骤：</p>
+<blockquote>
+<p>1、实现InvocationHandler接口创建调用处理器<br>2、调用Proxy的newInstance()方法创建动态代理实例</p>
+</blockquote>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;以下是一个动态代理的示例程序：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">WorkerInterface</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">doJob</span><span class="params">(String job)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Worker</span> <span class="keyword">implements</span> <span class="title">WorkerInterface</span></span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doJob</span><span class="params">(String job)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"doing "</span>+job);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Method;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProxyHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Object proxied;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyProxyHandler</span><span class="params">(Object proxied)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.proxied = proxied;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line">        System.out.println(<span class="string">"----------------info------------------------"</span>);</div><div class="line">        System.out.println(<span class="string">"Proxy: "</span>+proxy.getClass());</div><div class="line">        System.out.println(<span class="string">"Method: "</span>+method);</div><div class="line">        System.out.println(<span class="string">"args: "</span>+args);</div><div class="line">        System.out.println(<span class="string">"----------------info------------------------"</span>);</div><div class="line">        <span class="keyword">return</span> method.invoke(proxied, args);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleProxy</span></span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">doJob</span><span class="params">(WorkerInterface wi)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"Get ready to start work"</span>);</div><div class="line">        wi.doJob(<span class="string">"Whitewashing"</span>);</div><div class="line">        System.out.println(<span class="string">"Finish the work"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Worker w = <span class="keyword">new</span> Worker();</div><div class="line"></div><div class="line">        WorkerInterface proxy = (WorkerInterface)Proxy.newProxyInstance(WorkerInterface.class.getClassLoader(),</div><div class="line">                <span class="keyword">new</span> Class[]&#123;WorkerInterface.class&#125;,</div><div class="line">                <span class="keyword">new</span> MyProxyHandler(w));</div><div class="line"></div><div class="line">        doJob(proxy);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我们在调用Proxy.newInstance方法时实际上是经历了一下三步：</p>
+<blockquote>
+<p>1、创建代理类的类对象Class&lt;?&gt; cl = getProxyClass0(loader, intfs)<br>2、反射从生成的类对象cls中获取构造器对象：Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams)<br>3、用上一步获取的构造器对象创建动态代理类实例cons.newInstance(new Object[]{h})</p>
+</blockquote>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过动态代理我们可以为目标类预处理消息、添加修饰等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/类型信息/" rel="tag"># 类型信息</a>
+          
+            <a href="/tags/Class/" rel="tag"># Class</a>
+          
+            <a href="/tags/reflect/" rel="tag"># reflect</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/03/Dataset根据指定列去重保留最后一条数据/" rel="next" title="Dataset根据指定列去重保留最后一条数据">
+                <i class="fa fa-chevron-left"></i> Dataset根据指定列去重保留最后一条数据
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Class：class的抽象"><span class="nav-number">1.</span> <span class="nav-text">Class：class的抽象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取类型信息的简单示例"><span class="nav-number">1.1.</span> <span class="nav-text">获取类型信息的简单示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型判断"><span class="nav-number">1.2.</span> <span class="nav-text">类型判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型转换"><span class="nav-number">1.3.</span> <span class="nav-text">类型转换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反射"><span class="nav-number">2.</span> <span class="nav-text">反射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ReflectionAPI简介"><span class="nav-number">2.1.</span> <span class="nav-text">ReflectionAPI简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态代理"><span class="nav-number">2.2.</span> <span class="nav-text">动态代理</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

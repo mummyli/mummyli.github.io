@@ -276,6 +276,145 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/06/JAVA反射简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/06/JAVA反射简介/" itemprop="url">JAVA反射机制</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-06T22:13:32+08:00">
+                2017-09-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaSE/" itemprop="url" rel="index">
+                    <span itemprop="name">JavaSE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;反射可以让我们在运行时动态的加载类，访问、调用类的字段、方法、构造器。反射机制是构建框架的基础，如Spring框架核心，各种RPC框架等。</p>
+<h3 id="Class：class的抽象"><a href="#Class：class的抽象" class="headerlink" title="Class：class的抽象"></a>Class：class的抽象</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先我们需要知道在java中，类的信息是由Class对象来描述的，每个类对应一个Class对象，它表示一个类或者接口（一个annotation也算是一个接口）在运行时的类型信息。Class只有一个private的构造器，你并不能手动的去创建它，Class对象只能由JVM在加载一个类或者是在调用一个方法的时候去创建它。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/06/JAVA反射简介/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -307,7 +446,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-03T09:32:14+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-03T09:13:32+08:00">
                 2017-09-03
               </time>
             
@@ -365,7 +504,7 @@
 
       
         
-          <p>单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：<code>dropDuplicates(scala.collection.Seq&lt;String&gt; colNames)</code>、<code>dropDuplicates(String[] colNames)</code>、<code>dropDuplicates(String col1, scala.collection.Seq&lt;String&gt; cols)</code>、<code>dropDuplicates(String col1, String... cols)</code>，返回值都是去重后的新的Dataset<t>。但是有时候我们需要根据指定列去重后保留最后一条数据，采用dropDuplicate()方法就无法实现了。这时候我们可以将指定的列作为key（如果值过长，可以对其进行HASH，进行压缩映射），转换原数据为mapPartionsRDD，然后再reduceByKey进行去重，保留最后的一条数据。<br>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单纯的对Dataset去重可以采用spark的API中的<code>dropDuplicate()</code>方法以及可以指定列名的4个重载方法：<code>dropDuplicates(scala.collection.Seq&lt;String&gt; colNames)</code>、<code>dropDuplicates(String[] colNames)</code>、<code>dropDuplicates(String col1, scala.collection.Seq&lt;String&gt; cols)</code>、<code>dropDuplicates(String col1, String... cols)</code>，返回值都是去重后的新的Dataset。但是有时候我们需要根据指定列去重后保留最后一条数据，采用dropDuplicate()方法就无法实现了。这时候我们可以将指定的列作为key（如果值过长，可以对其进行HASH，进行压缩映射），转换原数据为mapPartionsRDD，然后再reduceByKey进行去重，保留最后的一条数据。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/09/03/Dataset根据指定列去重保留最后一条数据/#more" rel="contents">
@@ -450,7 +589,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -461,7 +600,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -472,7 +611,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
