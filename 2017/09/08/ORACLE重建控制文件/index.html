@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="oracle,控制文件," />
 
 
 
@@ -93,15 +93,17 @@
 
 
 
-<meta name="description" content="不务正业的CODER，当了一个假的DBA">
-<meta property="og:type" content="website">
-<meta property="og:title" content="木乃伊、">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;因为一次断电导致控制文件丢失，启动数据库报ORA-00205错误：123456789SQL&amp;gt; startupORACLE instance started.Total System Global Area  419430400 bytesFixed Size		    2925120 bytesV">
+<meta name="keywords" content="oracle,控制文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ORACLE重建控制文件">
+<meta property="og:url" content="http://yoursite.com/2017/09/08/ORACLE重建控制文件/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="不务正业的CODER，当了一个假的DBA">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;因为一次断电导致控制文件丢失，启动数据库报ORA-00205错误：123456789SQL&amp;gt; startupORACLE instance started.Total System Global Area  419430400 bytesFixed Size		    2925120 bytesV">
+<meta property="og:updated_time" content="2017-09-08T13:53:23.189Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="木乃伊、">
-<meta name="twitter:description" content="不务正业的CODER，当了一个假的DBA">
+<meta name="twitter:title" content="ORACLE重建控制文件">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;因为一次断电导致控制文件丢失，启动数据库报ORA-00205错误：123456789SQL&amp;gt; startupORACLE instance started.Total System Global Area  419430400 bytesFixed Size		    2925120 bytesV">
 
 
 
@@ -129,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/08/ORACLE重建控制文件/"/>
 
 
 
 
 
-  <title>木乃伊、</title>
+  <title>ORACLE重建控制文件 | 木乃伊、</title>
   
 
 
@@ -160,9 +162,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -265,9 +265,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -293,9 +293,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/08/ORACLE重建控制文件/" itemprop="url">ORACLE重建控制文件</a></h1>
+          <h1 class="post-title" itemprop="name headline">ORACLE重建控制文件</h1>
         
 
         <div class="post-meta">
@@ -349,6 +347,11 @@
           
 
           
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
 
           
 
@@ -364,9 +367,7 @@
       
 
       
-        
-          
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为一次断电导致控制文件丢失，启动数据库报ORA-00205错误：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">SQL&gt; startup</div><div class="line">ORACLE instance started.</div><div class="line"></div><div class="line">Total System Global Area  419430400 bytes</div><div class="line">Fixed Size		    2925120 bytes</div><div class="line">Variable Size		  285216192 bytes</div><div class="line">Database Buffers	  125829120 bytes</div><div class="line">Redo Buffers		    5459968 bytes</div><div class="line">ORA-00205: error in identifying control file, check alert log for more info</div></pre></td></tr></table></figure></p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;因为一次断电导致控制文件丢失，启动数据库报ORA-00205错误：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">SQL&gt; startup</div><div class="line">ORACLE instance started.</div><div class="line"></div><div class="line">Total System Global Area  419430400 bytes</div><div class="line">Fixed Size		    2925120 bytes</div><div class="line">Variable Size		  285216192 bytes</div><div class="line">Database Buffers	  125829120 bytes</div><div class="line">Redo Buffers		    5459968 bytes</div><div class="line">ORA-00205: error in identifying control file, check alert log for more info</div></pre></td></tr></table></figure></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过<code>v$instance</code>查看数据库status是started但是无法对数据库进行操作，<code>show pdbs</code>命令不显示任何信息。由于两份控制文件均丢失，无奈只能手动重建控制文件。</p>
 <h5 id="获取参数文件信息"><a href="#获取参数文件信息" class="headerlink" title="获取参数文件信息"></a>获取参数文件信息</h5><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过spfile创建pfile查看初始化参数中控制文件位置以及数据库名。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SQL&gt; create pfile from spfile;</div><div class="line"></div><div class="line">File created.</div></pre></td></tr></table></figure></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linux环境生成的pfile文件在<code>$ORACLE_HOME/dbs</code>目录下，查看初始化参数信息。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">[oracle@localhost dbs]$ cat initorcl.ora</div><div class="line">orcl.__data_transfer_cache_size=0</div><div class="line">orcl.__db_cache_size=125829120</div><div class="line">orcl.__java_pool_size=4194304</div><div class="line">orcl.__large_pool_size=8388608</div><div class="line">orcl.__oracle_base=<span class="string">'/u01/app'</span><span class="comment">#ORACLE_BASE set from environment</span></div><div class="line">orcl.__pga_aggregate_target=41943040</div><div class="line">orcl.__sga_target=377487360</div><div class="line">orcl.__shared_io_pool_size=0</div><div class="line">orcl.__shared_pool_size=134217728</div><div class="line">orcl.__streams_pool_size=0</div><div class="line">*._catalog_foreign_restore=FALSE</div><div class="line">*.aq_tm_processes=0</div><div class="line">*.audit_file_dest=<span class="string">'/u01/app/admin/orcl/adump'</span></div><div class="line">*.audit_trail=<span class="string">'db'</span></div><div class="line">*.compatible=<span class="string">'12.1.0.2.0'</span></div><div class="line">*.control_files=<span class="string">'/u01/app/oradata/orcl/control01.ctl'</span>,<span class="string">'/u01/app/fast_recovery_area/orcl/control02.ctl'</span></div><div class="line">*.db_block_size=8192</div><div class="line">*.db_domain=<span class="string">'localdomain'</span></div><div class="line">*.db_name=<span class="string">'orcl'</span></div><div class="line">*.db_recovery_file_dest=<span class="string">'/u01/app/fast_recovery_area'</span></div><div class="line">*.db_recovery_file_dest_size=4560m</div><div class="line">*.diagnostic_dest=<span class="string">'/u01/app'</span></div><div class="line">*.dispatchers=<span class="string">'(PROTOCOL=TCP) (SERVICE=orclXDB)'</span></div><div class="line">*.enable_pluggable_database=<span class="literal">true</span></div><div class="line">*.job_queue_processes=0</div><div class="line">*.memory_target=397m</div><div class="line">*.open_cursors=300</div><div class="line">*.processes=300</div><div class="line">*.remote_login_passwordfile=<span class="string">'EXCLUSIVE'</span></div><div class="line">*.undo_tablespace=<span class="string">'UNDOTBS1'</span></div></pre></td></tr></table></figure></p>
@@ -376,319 +377,74 @@
 <h5 id="执行CREATE-CONTROLFILE重建控制文件"><a href="#执行CREATE-CONTROLFILE重建控制文件" class="headerlink" title="执行CREATE CONTROLFILE重建控制文件"></a>执行<code>CREATE CONTROLFILE</code>重建控制文件</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">CONTROLFILE</span> <span class="keyword">REUSE</span> <span class="keyword">DATABASE</span> <span class="string">'ORCL'</span> <span class="keyword">NORESETLOGS</span> <span class="keyword">ARCHIVELOG</span></div><div class="line">    <span class="keyword">MAXLOGFILES</span> <span class="number">50</span></div><div class="line">    <span class="keyword">MAXLOGMEMBERS</span> <span class="number">5</span></div><div class="line">    MAXDATAFILES <span class="number">100</span></div><div class="line">    <span class="keyword">MAXINSTANCES</span> <span class="number">8</span></div><div class="line">    <span class="keyword">MAXLOGHISTORY</span> <span class="number">226</span></div><div class="line"><span class="keyword">LOGFILE</span></div><div class="line">  <span class="keyword">GROUP</span> <span class="number">1</span> <span class="string">'/u01/app/oradata/orcl/redo01.log'</span> <span class="keyword">SIZE</span> <span class="number">50</span>M,</div><div class="line">  <span class="keyword">GROUP</span> <span class="number">2</span> <span class="string">'/u01/app/oradata/orcl/redo02.log'</span> <span class="keyword">SIZE</span> <span class="number">50</span>M,</div><div class="line">  <span class="keyword">GROUP</span> <span class="number">3</span> <span class="string">'/u01/app/oradata/orcl/redo03.log'</span> <span class="keyword">SIZE</span> <span class="number">50</span>M</div><div class="line"><span class="keyword">DATAFILE</span></div><div class="line">  <span class="string">'/u01/app/oradata/orcl/interface_1.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/interface.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/pdborcl/example01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/pdborcl/SAMPLE_SCHEMA_users01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/pdborcl/sysaux01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/pdborcl/system01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/pdbseed/sysaux01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/pdbseed/system01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/sysaux01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/system01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/undotbs01.dbf'</span>,</div><div class="line">  <span class="string">'/u01/app/oradata/orcl/users01.dbf'</span></div><div class="line"><span class="built_in">CHARACTER</span> <span class="keyword">SET</span> US7ASCII;</div></pre></td></tr></table></figure>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重建控制文件后并不能直接打开数据库，需要对<code>system01.dbf</code>这个数据文件进行介质恢复，直接执行<code>recover database</code>即可。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">SQL&gt; recover database;</div><div class="line">Media recovery complete.</div><div class="line">SQL&gt; alter database open;</div><div class="line"></div><div class="line"></div><div class="line">Database altered.</div><div class="line"></div><div class="line">SQL&gt; SQL&gt; show pdbs;</div><div class="line"></div><div class="line">    CON_ID CON_NAME			                  OPEN MODE  RESTRICTED</div><div class="line">---------- ------------------------------ ---------- ----------</div><div class="line">	 2       PDB$SEED			                  READ ONLY  NO</div><div class="line">	 3       PDBORCL			                  MOUNTED</div><div class="line">SQL&gt; alter pluggable database pdborcl open;</div><div class="line"></div><div class="line">Pluggable database altered.</div><div class="line"></div><div class="line">SQL&gt; select name from v$datafile;</div><div class="line"></div><div class="line">NAME</div><div class="line">--------------------------------------------------------------------------------</div><div class="line">/u01/app/oradata/orcl/system01.dbf</div><div class="line">/u01/app/oradata/orcl/sysaux01.dbf</div><div class="line">/u01/app/oradata/orcl/undotbs01.dbf</div><div class="line">/u01/app/oradata/orcl/pdbseed/system01.dbf</div><div class="line">/u01/app/oradata/orcl/users01.dbf</div><div class="line">/u01/app/oradata/orcl/pdbseed/sysaux01.dbf</div><div class="line">/u01/app/oradata/orcl/pdborcl/system01.dbf</div><div class="line">/u01/app/oradata/orcl/pdborcl/sysaux01.dbf</div><div class="line">/u01/app/oradata/orcl/pdborcl/SAMPLE_SCHEMA_users01.dbf</div><div class="line">/u01/app/oradata/orcl/pdborcl/example01.dbf</div><div class="line">/u01/app/oradata/orcl/interface.dbf</div><div class="line"></div><div class="line">NAME</div><div class="line">--------------------------------------------------------------------------------</div><div class="line">/u01/app/oradata/orcl/interface_1.dbf</div><div class="line"></div><div class="line">12 rows selected.</div></pre></td></tr></table></figure></p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/06/JAVA反射简介/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="L4J">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="木乃伊、">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/06/JAVA反射简介/" itemprop="url">JAVA反射机制</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-06T22:13:32+08:00">
-                2017-09-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JavaSE/" itemprop="url" rel="index">
-                    <span itemprop="name">JavaSE</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/oracle/" rel="tag"># oracle</a>
           
-
+            <a href="/tags/控制文件/" rel="tag"># 控制文件</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;反射可以让我们在运行时动态的加载类，访问、调用类的字段、方法、构造器。反射机制是构建框架的基础，如Spring框架核心，各种RPC框架等。</p>
-<h3 id="Class：class的抽象"><a href="#Class：class的抽象" class="headerlink" title="Class：class的抽象"></a>Class：class的抽象</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先我们需要知道在java中，类的信息是由Class对象来描述的，每个类对应一个Class对象，它表示一个类或者接口（一个annotation也算是一个接口）在运行时的类型信息。Class只有一个private的构造器，你并不能手动的去创建它，Class对象只能由JVM在加载一个类或者是在调用一个方法的时候去创建它。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/09/06/JAVA反射简介/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/06/JAVA反射简介/" rel="next" title="JAVA反射机制">
+                <i class="fa fa-chevron-left"></i> JAVA反射机制
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
 
-    <div>
-      
-    </div>
+          <span class="post-nav-divider"></span>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="L4J">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="木乃伊、">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/03/Dataset根据指定列去重保留最后一条数据/" itemprop="url">Dataset根据指定列去重保留最后一条数据</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+          <div class="post-nav-prev post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-03T09:13:32+08:00">
-                2017-09-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">spark</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单纯的对Dataset去重可以采用spark的API中的<code>dropDuplicate()</code>方法以及可以指定列名的4个重载方法：<code>dropDuplicates(scala.collection.Seq&lt;String&gt; colNames)</code>、<code>dropDuplicates(String[] colNames)</code>、<code>dropDuplicates(String col1, scala.collection.Seq&lt;String&gt; cols)</code>、<code>dropDuplicates(String col1, String... cols)</code>，返回值都是去重后的新的Dataset。但是有时候我们需要根据指定列去重后保留最后一条数据，采用dropDuplicate()方法就无法实现了。这时候我们可以将指定的列作为key（如果值过长，可以对其进行HASH，进行压缩映射），转换原数据为mapPartionsRDD，然后再reduceByKey进行去重，保留最后的一条数据。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/09/03/Dataset根据指定列去重保留最后一条数据/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -696,6 +452,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
 
         </div>
         
@@ -715,8 +477,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/header.jpg"
@@ -778,6 +549,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#获取参数文件信息"><span class="nav-number">1.</span> <span class="nav-text">获取参数文件信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取数据库字符集"><span class="nav-number">2.</span> <span class="nav-text">获取数据库字符集</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取数据文件"><span class="nav-number">3.</span> <span class="nav-text">获取数据文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#执行CREATE-CONTROLFILE重建控制文件"><span class="nav-number">4.</span> <span class="nav-text">执行CREATE CONTROLFILE重建控制文件</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -882,10 +669,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
@@ -917,6 +704,10 @@
   
     
 
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
     
   
 
