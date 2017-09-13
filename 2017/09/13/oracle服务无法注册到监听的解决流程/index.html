@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="oracle," />
 
 
 
@@ -93,16 +93,17 @@
 
 
 
-<meta name="description" content="不务正业的CODER，当了一个假的DBA">
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta name="description" content="有时候我们lsnrctl start成功启动监听之后，查看status一直显示no service12The listener supports no servicesThe command completed successfully 对于这类问题，一般我的解决步骤如下：">
+<meta name="keywords" content="oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="oracle服务无法注册到监听的解决流程">
+<meta property="og:url" content="http://yoursite.com/2017/09/13/oracle服务无法注册到监听的解决流程/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="不务正业的CODER，当了一个假的DBA">
-<meta property="og:updated_time" content="2017-09-08T14:53:00.536Z">
+<meta property="og:description" content="有时候我们lsnrctl start成功启动监听之后，查看status一直显示no service12The listener supports no servicesThe command completed successfully 对于这类问题，一般我的解决步骤如下：">
+<meta property="og:updated_time" content="2017-09-13T14:03:36.402Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
-<meta name="twitter:description" content="不务正业的CODER，当了一个假的DBA">
+<meta name="twitter:title" content="oracle服务无法注册到监听的解决流程">
+<meta name="twitter:description" content="有时候我们lsnrctl start成功启动监听之后，查看status一直显示no service12The listener supports no servicesThe command completed successfully 对于这类问题，一般我的解决步骤如下：">
 
 
 
@@ -130,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/13/oracle服务无法注册到监听的解决流程/"/>
 
 
 
 
 
-  <title>categories | 木乃伊、</title>
+  <title>oracle服务无法注册到监听的解决流程 | 木乃伊、</title>
   
 
 
@@ -266,25 +267,177 @@
             
 
   <div id="posts" class="posts-expand">
-  <header class="post-header">
+    
 
-	<h1 class="post-title" itemprop="name headline">categories</h1>
+  
 
+  
+  
+  
 
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/13/oracle服务无法注册到监听的解决流程/">
 
-</header>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
 
     
-    
-      <div class="category-all-page">
-        <div class="category-all-title">
-            目前共计 3 个分类
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">oracle服务无法注册到监听的解决流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-13T21:28:18+08:00">
+                2017-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
         </div>
-        <div class="category-all">
-          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaSE/">JavaSE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ORACLE/">ORACLE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/spark/">spark</a><span class="category-list-count">1</span></li></ul>
-        </div>
-      </div>
+      </header>
     
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>有时候我们<code>lsnrctl start</code>成功启动监听之后，查看status一直显示<code>no service</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">The listener supports no services</div><div class="line">The <span class="built_in">command</span> completed successfully</div></pre></td></tr></table></figure></p>
+<p>对于这类问题，一般我的解决步骤如下：<br><a id="more"></a><br><strong> 1、查看数据库是否宕机 </strong><br>登录数据库查看数据库是否运行正常。对于12c数据库，通过<code>show pdbs</code>或者查询<code>v$pdbs</code>视图获取PDB状态<br><strong> 2、尝试强制注册服务 </strong><br>以sysdba登录数据库，执行以下命令<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SQL&gt;alter system register;</div></pre></td></tr></table></figure></p>
+<p><strong> 3、查看<code>local_listener</code>参数是否有问题 </strong><br><code>sqlplus / as sysdba</code>登录数据库，执行<code>show parameter local</code>查看参数值与tnsname.ora中配置的值是否相同（对于动态注册监听，由PMON进程读取tnsname.ora中的相关信息）。<br>修改<code>local_listener</code>参数值指向tnsname.ora中配置的监听名：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SQL &gt; alter system set local_listener=LISTENER;</div><div class="line">SQL &gt; alter system register;</div></pre></td></tr></table></figure></p>
+<p>或者直接将<code>local_listener</code>的值为监听配置<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SQL &gt; alter system set local_listener=LISTENER;</div><div class="line">SQL &gt; alter system register;</div></pre></td></tr></table></figure></p>
+<p>一般来说到此都能解决服务注册的问题。下面提一下静态注册。<br><strong> 4、静态注册 </strong><br>静态注册的信息在<code>listener.ora</code>文件中。我们通过<code>netmgr</code>配置既是修改的该文件。我们可以通过<code>ORACLE Net Manager</code>进行图形化的配置。也可以直接手动的在<code>listener.ora</code>中添加配置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SID_LIST_LISTENER =</div><div class="line">(SID_LIST =</div><div class="line">  (SID_DESC =</div><div class="line">  (GLOBAL_DBNAME = orcl)</div><div class="line">  (SID_NAME = orcl)</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/oracle/" rel="tag"># oracle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/08/ORACLE重建控制文件/" rel="next" title="ORACLE重建控制文件">
+                <i class="fa fa-chevron-left"></i> ORACLE重建控制文件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -293,6 +446,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
 
         </div>
         
@@ -479,10 +638,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
@@ -514,6 +673,10 @@
   
     
 
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
     
   
 
