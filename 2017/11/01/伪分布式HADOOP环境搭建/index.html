@@ -1,0 +1,763 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="hadoop,大数据," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="本文伪分布式集群的搭建基于CentOS 7+hadoop 2.8.0+server jre 8。 配置防火墙规则本文主要目标是单节点集群的搭建，为了简单省事直接把防火墙关闭了。1[root@localhost storage]# systemctl stop firewalld 关于CENTOS 7为firewalld新增开放端口的方式请移步CentOS 7 为firewalld添加开放端口及相关">
+<meta name="keywords" content="hadoop,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="伪分布式HADOOP环境搭建">
+<meta property="og:url" content="http://yoursite.com/2017/11/01/伪分布式HADOOP环境搭建/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="本文伪分布式集群的搭建基于CentOS 7+hadoop 2.8.0+server jre 8。 配置防火墙规则本文主要目标是单节点集群的搭建，为了简单省事直接把防火墙关闭了。1[root@localhost storage]# systemctl stop firewalld 关于CENTOS 7为firewalld新增开放端口的方式请移步CentOS 7 为firewalld添加开放端口及相关">
+<meta property="og:updated_time" content="2017-11-01T13:25:55.936Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="伪分布式HADOOP环境搭建">
+<meta name="twitter:description" content="本文伪分布式集群的搭建基于CentOS 7+hadoop 2.8.0+server jre 8。 配置防火墙规则本文主要目标是单节点集群的搭建，为了简单省事直接把防火墙关闭了。1[root@localhost storage]# systemctl stop firewalld 关于CENTOS 7为firewalld新增开放端口的方式请移步CentOS 7 为firewalld添加开放端口及相关">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/01/伪分布式HADOOP环境搭建/"/>
+
+
+
+
+
+  <title>伪分布式HADOOP环境搭建 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/01/伪分布式HADOOP环境搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">伪分布式HADOOP环境搭建</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-01T21:14:08+08:00">
+                2017-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/HADOOP/" itemprop="url" rel="index">
+                    <span itemprop="name">HADOOP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文伪分布式集群的搭建基于CentOS 7+hadoop 2.8.0+server jre 8。</p>
+<h3 id="配置防火墙规则"><a href="#配置防火墙规则" class="headerlink" title="配置防火墙规则"></a>配置防火墙规则</h3><p>本文主要目标是单节点集群的搭建，为了简单省事直接把防火墙关闭了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@localhost storage]<span class="comment"># systemctl stop firewalld</span></div></pre></td></tr></table></figure></p>
+<p>关于CENTOS 7为firewalld新增开放端口的方式请移步<a href="http://www.cnblogs.com/hubing/p/6058932.html" target="_blank" rel="external">CentOS 7 为firewalld添加开放端口及相关资料</a>。<br><a id="more"></a></p>
+<h3 id="安装jdk"><a href="#安装jdk" class="headerlink" title="安装jdk"></a>安装jdk</h3><p>jdk版本：server-jre-8u151-linux-x64.tar.gz</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;解压文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar -zxvf server-jre-8u151-linux-x64.tar.gz</span></div></pre></td></tr></table></figure></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;配置环境变量<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi ~/.bash_profile</span></div><div class="line"></div><div class="line">内容如下：</div><div class="line"><span class="built_in">export</span> JAVA_HOME=/storage/jre/jdk1.8.0_151</div><div class="line"><span class="built_in">export</span> CALSSPATH=.:<span class="variable">$JAVA_HOME</span>/jre/lib/rt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</div><div class="line">PATH=<span class="variable">$PATH</span>:<span class="variable">$HOME</span>/bin:<span class="variable">$JAVA_HOME</span>/bin</div><div class="line"></div><div class="line"><span class="built_in">export</span> PATH</div></pre></td></tr></table></figure></p>
+<p>检查是否配置正确<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@localhost jdk1.8.0_151]<span class="comment"># java -version</span></div><div class="line">java version <span class="string">"1.8.0_151"</span></div><div class="line">Java(TM) SE Runtime Environment (build 1.8.0_151-b12)</div><div class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.151-b12, mixed mode)</div></pre></td></tr></table></figure></p>
+<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><p>为hadoop创建独立的系统用户，方便安全、权限等的管理。该步骤非必须，也可以直接部署在root用户下。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># groupadd hadoop</span></div><div class="line"><span class="comment"># useradd hduser -g hadoop</span></div></pre></td></tr></table></figure></p>
+<h3 id="配置SSH"><a href="#配置SSH" class="headerlink" title="配置SSH"></a>配置SSH</h3><p>切换至hduser用户<code>su - hduser</code>，为<code>hduser</code>用户生成SSH key。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost ~]$ ssh-keygen -t rsa -P <span class="string">""</span></div><div class="line">Generating public/private rsa key pair.</div><div class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/hduser/.ssh/id_rsa):</div><div class="line">Created directory <span class="string">'/home/hduser/.ssh'</span>.</div><div class="line">Your identification has been saved <span class="keyword">in</span> /home/hduser/.ssh/id_rsa.</div><div class="line">Your public key has been saved <span class="keyword">in</span> /home/hduser/.ssh/id_rsa.pub.</div><div class="line">The key fingerprint is:</div><div class="line">55:06:d8:e8:20:75:1c:d0:f9:7e:83:16:9f:89:4d:8b hduser@localhost.localdomain</div><div class="line">The key<span class="string">'s randomart image is:</span></div><div class="line">+--[ RSA 2048]----+</div><div class="line">|     .o+o*..o    |</div><div class="line">|    . ..* .o     |</div><div class="line">|     . o ..      |</div><div class="line">|        ..o .    |</div><div class="line">|        S. O +   |</div><div class="line">|          E O    |</div><div class="line">|         . . .   |</div><div class="line">|                 |</div><div class="line">|                 |</div><div class="line">+-----------------+</div></pre></td></tr></table></figure></p>
+<p>以上命令执行完成之后会生成一个空密码的RSA密钥对(空密码是为了避免每次登陆时输入密码)。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost .ssh]$ ls</div><div class="line">id_rsa  id_rsa.pub</div></pre></td></tr></table></figure></p>
+<p>然后，你需要启用刚刚创建的密钥来通过SSH访问你的服务器。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</div></pre></td></tr></table></figure></p>
+<p>最后测试SSH的设置是否正确<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost .ssh]$ ssh localhost</div><div class="line">The authenticity of host <span class="string">'localhost (::1)'</span> can<span class="string">'t be established.</span></div><div class="line">ECDSA key fingerprint is a6:35:b9:b9:43:4f:b2:8b:29:e2:89:35:b5:ae:18:c9.</div><div class="line">Are you sure you want to continue connecting (yes/no)? yes</div><div class="line">Warning: Permanently added 'localhost<span class="string">' (ECDSA) to the list of known hosts.</span></div><div class="line">Last login: Tue Oct 31 02:21:24 2017</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>如果SSH连接失败了，检查<code>/etc/ssh/sshd_config</code>的服务配置，<code>PubkeyAuthentication</code>值是否为<code>yes</code></p>
+<p>如果启用了<code>AllowUsers</code>参数，需要把<code>hduser</code>用户添加到列表。</p>
+<p>如果修改了SSH配置，需要重新加载配置<code>/etc/init.d/ssh reload</code></p>
+</blockquote>
+<h3 id="下载解压hadoop"><a href="#下载解压hadoop" class="headerlink" title="下载解压hadoop"></a>下载解压hadoop</h3><p>从<a href="http://www.apache.org/dyn/closer.cgi/hadoop/core" target="_blank" rel="external">Apache Download Mirrors</a>下载安装包。它包括源码版的，源码版需要下载后自己编译，我们直接下载编译好的版本。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost hadoop_install]$ tar -zxvf hadoop-2.8.2.tar.gz</div><div class="line">[hduser@localhost hadoop_install]$ mv hadoop-2.8.2 /storage/</div></pre></td></tr></table></figure></p>
+<h3 id="配置hduser环境变量"><a href="#配置hduser环境变量" class="headerlink" title="配置hduser环境变量"></a>配置hduser环境变量</h3><p>新增hadoop相关环境变量配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost hadoop-2.8.2]$ vi ~/.bash_profile</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># .bash_profile</span></div><div class="line"></div><div class="line"><span class="comment"># Get the aliases and functions</span></div><div class="line"><span class="keyword">if</span> [ <span class="_">-f</span> ~/.bashrc ]; <span class="keyword">then</span></div><div class="line">        . ~/.bashrc</div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="comment"># User specific environment and startup programs</span></div><div class="line"><span class="built_in">export</span> HADOOP_HOME=/storage/hadoop-2.8.2</div><div class="line"><span class="built_in">export</span> JAVA_HOME=/storage/jre/jdk1.8.0_151</div><div class="line"></div><div class="line">PATH=<span class="variable">$PATH</span>:<span class="variable">$HOME</span>/.local/bin:<span class="variable">$HOME</span>/bin:<span class="variable">$HADOOP_HOME</span>/bin:<span class="variable">$JAVA_HOME</span>/bin</div><div class="line"></div><div class="line"><span class="built_in">export</span> PATH</div></pre></td></tr></table></figure></p>
+<p>重新加载环境变量<code>source ~/.bash_profile</code></p>
+<h3 id="配置hadoop"><a href="#配置hadoop" class="headerlink" title="配置hadoop"></a>配置hadoop</h3><h4 id="hadoop-env-sh"><a href="#hadoop-env-sh" class="headerlink" title="hadoop-env.sh"></a>hadoop-env.sh</h4><p>文件所在目录为<code>$HADOOP_HOME/etc/hadoop</code>，它唯一必须修改的参数是<code>JAVA_HOME</code>，其他可以采用默认配置。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">......</div><div class="line"><span class="comment"># The only required environment variable is JAVA_HOME.  All others are</span></div><div class="line"><span class="comment"># optional.  When running a distributed configuration it is best to</span></div><div class="line"><span class="comment"># set JAVA_HOME in this file, so that it is correctly defined on</span></div><div class="line"><span class="comment"># remote nodes.</span></div><div class="line"></div><div class="line"><span class="comment"># The java implementation to use.</span></div><div class="line"><span class="built_in">export</span> JAVA_HOME=/storage/jre/jdk1.8.0_151</div><div class="line">......</div></pre></td></tr></table></figure></p>
+<h4 id="core-site-xml"><a href="#core-site-xml" class="headerlink" title="core-site.xml"></a>core-site.xml</h4><p>这里我们主要配置<code>hadoop.tmp.dir</code>和<code>fs.defaultFS</code>。这里查看更多<a href="http://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-common/core-default.xml" target="_blank" rel="external">core-site.xml</a>相关配置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line">&lt;property&gt;</div><div class="line">  &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</div><div class="line">  &lt;value&gt;/storage/hadoop-2.8.2/tmp&lt;/value&gt;</div><div class="line">  &lt;description&gt;A base for other temporary directories.&lt;/description&gt;</div><div class="line">&lt;/property&gt;</div><div class="line"></div><div class="line">&lt;property&gt;</div><div class="line">  &lt;name&gt;fs.defaultFS&lt;/name&gt;</div><div class="line">  &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;</div><div class="line">  &lt;description&gt;The name of the default file system.  A URI whose</div><div class="line">  scheme and authority determine the FileSystem implementation.  The</div><div class="line">  uri&apos;s scheme determines the config property (fs.SCHEME.impl) naming</div><div class="line">  the FileSystem implementation class.  The uri&apos;s authority is used to</div><div class="line">  determine the host, port, etc. for a filesystem.&lt;/description&gt;</div><div class="line">&lt;/property&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure></p>
+<h4 id="hdfs-site-xml"><a href="#hdfs-site-xml" class="headerlink" title="hdfs-site.xml"></a>hdfs-site.xml</h4><p>由于我们配置的单节点伪分布式模式，所以修改dfs的副本数为1。这里查看其他<a href="http://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml" target="_blank" rel="external">core_default.xml</a>默认配置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line">    &lt;property&gt;</div><div class="line">        &lt;name&gt;dfs.replication&lt;/name&gt;</div><div class="line">        &lt;value&gt;1&lt;/value&gt;</div><div class="line">    &lt;/property&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure></p>
+<h4 id="mapred-site-xml"><a href="#mapred-site-xml" class="headerlink" title="mapred-site.xml"></a>mapred-site.xml</h4><p><a href="http://hadoop.apache.org/docs/r2.8.0/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml" target="_blank" rel="external">mapred-site.xml</a>相关配置。</p>
+<h3 id="格式化HDFS文件系统"><a href="#格式化HDFS文件系统" class="headerlink" title="格式化HDFS文件系统"></a>格式化HDFS文件系统</h3><p>在NameNode节点格式化hadoop文件系统。如果在正在运行的集群中执行格式化命令会导致集群所有数据丢失。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost hadoop]$ hdfs namenode -format</div></pre></td></tr></table></figure></p>
+<h3 id="启动与停止集群"><a href="#启动与停止集群" class="headerlink" title="启动与停止集群"></a>启动与停止集群</h3><p>执行以下命令可以启动集群的NodeManager，NameNode，SecondaryNameNode，ResourceManager，DataNode。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost sbin]$ sbin/start-all.sh</div></pre></td></tr></table></figure></p>
+<p>启动完成之后可以执行JPS命令查看各进程是否启动成功。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[hduser@localhost sbin]$ jps</div><div class="line">9265 NodeManager</div><div class="line">9314 Jps</div><div class="line">8711 NameNode</div><div class="line">9003 SecondaryNameNode</div><div class="line">9164 ResourceManager</div><div class="line">8813 DataNode</div></pre></td></tr></table></figure></p>
+<p>hadoop提供了一些web界面可以查看集群的相关信息。可以通过<a href="http://localhost:50070/" target="_blank" rel="external">http://localhost:50070/</a>查看Namenode的一些简要信息以及集群的启停日志。<br \=""><br>通过执行<code>sbin/stop-all.sh</code>可以停止集群的所有进程。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+            <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/13/oracle服务无法注册到监听的解决流程/" rel="next" title="oracle服务无法注册到监听的解决流程">
+                <i class="fa fa-chevron-left"></i> oracle服务无法注册到监听的解决流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置防火墙规则"><span class="nav-number">1.</span> <span class="nav-text">配置防火墙规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装jdk"><span class="nav-number">2.</span> <span class="nav-text">安装jdk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建用户"><span class="nav-number">3.</span> <span class="nav-text">创建用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置SSH"><span class="nav-number">4.</span> <span class="nav-text">配置SSH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载解压hadoop"><span class="nav-number">5.</span> <span class="nav-text">下载解压hadoop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置hduser环境变量"><span class="nav-number">6.</span> <span class="nav-text">配置hduser环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置hadoop"><span class="nav-number">7.</span> <span class="nav-text">配置hadoop</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hadoop-env-sh"><span class="nav-number">7.1.</span> <span class="nav-text">hadoop-env.sh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#core-site-xml"><span class="nav-number">7.2.</span> <span class="nav-text">core-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hdfs-site-xml"><span class="nav-number">7.3.</span> <span class="nav-text">hdfs-site.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mapred-site-xml"><span class="nav-number">7.4.</span> <span class="nav-text">mapred-site.xml</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#格式化HDFS文件系统"><span class="nav-number">8.</span> <span class="nav-text">格式化HDFS文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动与停止集群"><span class="nav-number">9.</span> <span class="nav-text">启动与停止集群</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
