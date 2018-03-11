@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/09/13/oracle服务无法注册到监听的解决流程/index.html">
 <meta property="og:site_name" content="木乃伊、">
 <meta property="og:description" content="有时候我们lsnrctl start成功启动监听之后，查看status一直显示no service12The listener supports no servicesThe command completed successfully 对于这类问题，一般我的解决步骤如下：">
-<meta property="og:updated_time" content="2017-09-13T14:03:36.402Z">
+<meta property="og:updated_time" content="2018-03-11T02:43:42.310Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="oracle服务无法注册到监听的解决流程">
 <meta name="twitter:description" content="有时候我们lsnrctl start成功启动监听之后，查看status一直显示no service12The listener supports no servicesThe command completed successfully 对于这类问题，一般我的解决步骤如下：">
@@ -370,7 +370,7 @@
         <p>有时候我们<code>lsnrctl start</code>成功启动监听之后，查看status一直显示<code>no service</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">The listener supports no services</div><div class="line">The <span class="built_in">command</span> completed successfully</div></pre></td></tr></table></figure></p>
 <p>对于这类问题，一般我的解决步骤如下：<br><a id="more"></a><br><strong> 1、查看数据库是否宕机 </strong><br>登录数据库查看数据库是否运行正常。对于12c数据库，通过<code>show pdbs</code>或者查询<code>v$pdbs</code>视图获取PDB状态<br><strong> 2、尝试强制注册服务 </strong><br>以sysdba登录数据库，执行以下命令<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SQL&gt;alter system register;</div></pre></td></tr></table></figure></p>
 <p><strong> 3、查看<code>local_listener</code>参数是否有问题 </strong><br><code>sqlplus / as sysdba</code>登录数据库，执行<code>show parameter local</code>查看参数值与tnsname.ora中配置的值是否相同（对于动态注册监听，由PMON进程读取tnsname.ora中的相关信息）。<br>修改<code>local_listener</code>参数值指向tnsname.ora中配置的监听名：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SQL &gt; alter system set local_listener=LISTENER;</div><div class="line">SQL &gt; alter system register;</div></pre></td></tr></table></figure></p>
-<p>或者直接将<code>local_listener</code>的值为监听配置<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SQL &gt; alter system set local_listener=LISTENER;</div><div class="line">SQL &gt; alter system register;</div></pre></td></tr></table></figure></p>
+<p>或者直接将<code>local_listener</code>的值为监听配置<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SQL &gt; alter system set local_listener='(ADDRESS=(PROTOCOL=TCP)(HOST=dbsw)(PORT=1521))';</div><div class="line">SQL &gt; alter system register;</div></pre></td></tr></table></figure></p>
 <p>一般来说到此都能解决服务注册的问题。下面提一下静态注册。<br><strong> 4、静态注册 </strong><br>静态注册的信息在<code>listener.ora</code>文件中。我们通过<code>netmgr</code>配置既是修改的该文件。我们可以通过<code>ORACLE Net Manager</code>进行图形化的配置。也可以直接手动的在<code>listener.ora</code>中添加配置：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SID_LIST_LISTENER =</div><div class="line">(SID_LIST =</div><div class="line">  (SID_DESC =</div><div class="line">  (GLOBAL_DBNAME = orcl)</div><div class="line">  (SID_NAME = orcl)</div><div class="line">  )</div><div class="line">)</div></pre></td></tr></table></figure></p>
 
       
@@ -513,7 +513,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
