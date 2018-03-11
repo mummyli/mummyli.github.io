@@ -1,0 +1,754 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="oracle,装软件的程序员," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。本文记录了利用静默方式安装ORACLE数据库软件，再利用dbca命令创建数据库。也可以直接利用静默安装文件同时安装ORACLE数据库软件和创建数据库，但是同时进行的时候容易出错，所以本文将其分为两步进行。">
+<meta name="keywords" content="oracle,装软件的程序员">
+<meta property="og:type" content="article">
+<meta property="og:title" content="静默安装ORACLE数据库">
+<meta property="og:url" content="http://yoursite.com/2018/03/11/静默安装ORACLE数据库/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。本文记录了利用静默方式安装ORACLE数据库软件，再利用dbca命令创建数据库。也可以直接利用静默安装文件同时安装ORACLE数据库软件和创建数据库，但是同时进行的时候容易出错，所以本文将其分为两步进行。">
+<meta property="og:updated_time" content="2018-03-11T02:20:32.714Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="静默安装ORACLE数据库">
+<meta name="twitter:description" content="OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。本文记录了利用静默方式安装ORACLE数据库软件，再利用dbca命令创建数据库。也可以直接利用静默安装文件同时安装ORACLE数据库软件和创建数据库，但是同时进行的时候容易出错，所以本文将其分为两步进行。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/11/静默安装ORACLE数据库/"/>
+
+
+
+
+
+  <title>静默安装ORACLE数据库 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/11/静默安装ORACLE数据库/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">静默安装ORACLE数据库</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-11T09:51:26+08:00">
+                2018-03-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>OUI的安装方式便捷、直观，但是有时候出于一些原因（PS：网络等原因），无法在服务器上使用OUI的方式，此时就只有用命令行来进行安装了。<br>本文记录了利用静默方式安装ORACLE数据库软件，再利用dbca命令创建数据库。也可以直接利用静默安装文件同时安装ORACLE数据库软件和创建数据库，但是同时进行的时候容易出错，所以本文将其分为两步进行。<br><a id="more"></a></p>
+<h3 id="静默安装ORACLE数据库软件"><a href="#静默安装ORACLE数据库软件" class="headerlink" title="静默安装ORACLE数据库软件"></a>静默安装ORACLE数据库软件</h3><h4 id="配置内核参数（root用户）"><a href="#配置内核参数（root用户）" class="headerlink" title="配置内核参数（root用户）"></a>配置内核参数（root用户）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi /etc/sysctl.conf</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">kernel.shmmax = 784676864  </div><div class="line">kernel.shmall = 153257  </div><div class="line">kernel.shmmni = 4096  </div><div class="line">kernel.sem = 250 32000 100 128  </div><div class="line">net.ipv4.ip_local_port_range = 9000 65500  </div><div class="line">net.core.rmem_default = 4194304  </div><div class="line">net.core.rmem_max = 4194304  </div><div class="line">net.core.wmem_default = 262144  </div><div class="line">net.core.wmem_max = 1048576  </div><div class="line">fs.aio-max-nr = 1048576  </div><div class="line">fs.file-max = 6815744</div></pre></td></tr></table></figure>
+<p>修改后使用sysctl -p使配置生效</p>
+<h4 id="配置资源限制（root用户）"><a href="#配置资源限制（root用户）" class="headerlink" title="配置资源限制（root用户）"></a>配置资源限制（root用户）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi /etc/security/limits.conf</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">oracle     soft       nproc     2047  </div><div class="line">oracle     hard     nproc     16384  </div><div class="line">oracle     soft     nofile      1024  </div><div class="line">oracle     hard     nofile     65536  </div><div class="line">oracle     soft      stack     10240</div></pre></td></tr></table></figure>
+<h4 id="创建用户组和用户组（root用户）"><a href="#创建用户组和用户组（root用户）" class="headerlink" title="创建用户组和用户组（root用户）"></a>创建用户组和用户组（root用户）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">groupadd oinstall  </div><div class="line">groupadd dba  </div><div class="line">useradd -m -g oinstall -G dba oracle</div></pre></td></tr></table></figure>
+<p>创建完成后设置oracle账号口令<code>passwd oracle</code>。 </p>
+<p>####创建目录以及授权（root用户）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir -p /home/u01</div><div class="line">mkdir -p /u01/app/oracle </div><div class="line">chown -R oracle:oinstall /u01/  </div><div class="line">chmod -R 775 /u01/</div></pre></td></tr></table></figure></p>
+<p>创建软链接绑定<code>ln -s /home/u01 /u01</code></p>
+<h4 id="配置环境变量（oracle用户）"><a href="#配置环境变量（oracle用户）" class="headerlink" title="配置环境变量（oracle用户）"></a>配置环境变量（oracle用户）</h4><p><code>su - oracle</code>切换到oracle用户,编辑<code>~/.bash_profile</code>配置环境变量。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">export</span> ORACLE_BASE=/u01/app  </div><div class="line"><span class="built_in">export</span> ORACLE_HOME=<span class="variable">$ORACLE_BASE</span>/oracle  </div><div class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="variable">$ORACLE_HOME</span>/lib:/lib:/usr/lib:/usr/<span class="built_in">local</span>/lib:/usr/X11R6/lib  </div><div class="line"><span class="built_in">export</span> TNS_ADMIN=<span class="variable">$ORACLE_HOME</span>/network/admin  </div><div class="line"><span class="built_in">export</span> ORA_NLS33=<span class="variable">$ORACLE_HOME</span>/ocommon/nls/admin/data  </div><div class="line"><span class="built_in">export</span> ORACLE_OWNER=oracle  </div><div class="line"><span class="built_in">export</span> PATH=/usr/kerberos/sbin:/usr/kerberos/bin:/usr/<span class="built_in">local</span>/sbin:/usr/<span class="built_in">local</span>/bin:/sbin:/usr/sbin:/usr/bin:/root/bin:<span class="variable">$ORACLE_HOME</span>/bin:<span class="variable">$PATH</span></div></pre></td></tr></table></figure></p>
+<p>编辑完成后执行<code>source ~/.bash_profile</code>使之生效。</p>
+<h4 id="配置响应文件"><a href="#配置响应文件" class="headerlink" title="配置响应文件"></a>配置响应文件</h4><p>在解压后的oracle安装文件夹<code>database/response</code>目录下有一个响应文件的配置模板<code>db_install.rsp</code>，根据需要自行配置即可。<br>下面是我的<code>install.rsp</code>配置文件，供参考：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Do not change the following system generated value.   </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v12.1.0  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the installation option.  </span></div><div class="line"><span class="comment"># It can be one of the following:  </span></div><div class="line"><span class="comment">#   - INSTALL_DB_SWONLY  </span></div><div class="line"><span class="comment">#   - INSTALL_DB_AND_CONFIG  </span></div><div class="line"><span class="comment">#   - UPGRADE_DB  </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.option=INSTALL_DB_SWONLY  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the hostname of the system as set during the install. It can be used  </span></div><div class="line"><span class="comment"># to force the installation to use an alternative hostname rather than using the  </span></div><div class="line"><span class="comment"># first hostname found on the system. (e.g., for systems with multiple hostnames   </span></div><div class="line"><span class="comment"># and network interfaces)  </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">ORACLE_HOSTNAME=orc1  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the Unix group to be set for the inventory directory.    </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">UNIX_GROUP_NAME=dba  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the location which holds the inventory files.  </span></div><div class="line"><span class="comment"># This is an optional parameter if installing on  </span></div><div class="line"><span class="comment"># Windows based Operating System.  </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">INVENTORY_LOCATION=/u01/app/oraInventory  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the languages in which the components will be installed.               </span></div><div class="line"><span class="comment">#   </span></div><div class="line"><span class="comment"># en   : English                  ja   : Japanese                    </span></div><div class="line"><span class="comment"># fr   : French                   ko   : Korean                      </span></div><div class="line"><span class="comment"># ar   : Arabic                   es   : Latin American Spanish      </span></div><div class="line"><span class="comment"># bn   : Bengali                  lv   : Latvian                     </span></div><div class="line"><span class="comment"># pt_BR: Brazilian Portuguese     lt   : Lithuanian                  </span></div><div class="line"><span class="comment"># bg   : Bulgarian                ms   : Malay                       </span></div><div class="line"><span class="comment"># fr_CA: Canadian French          es_MX: Mexican Spanish             </span></div><div class="line"><span class="comment"># ca   : Catalan                  no   : Norwegian                   </span></div><div class="line"><span class="comment"># hr   : Croatian                 pl   : Polish                      </span></div><div class="line"><span class="comment"># cs   : Czech                    pt   : Portuguese                  </span></div><div class="line"><span class="comment"># da   : Danish                   ro   : Romanian                    </span></div><div class="line"><span class="comment"># nl   : Dutch                    ru   : Russian                     </span></div><div class="line"><span class="comment"># ar_EG: Egyptian                 zh_CN: Simplified Chinese          </span></div><div class="line"><span class="comment"># en_GB: English (Great Britain)  sk   : Slovak                      </span></div><div class="line"><span class="comment"># et   : Estonian                 sl   : Slovenian                   </span></div><div class="line"><span class="comment"># fi   : Finnish                  es_ES: Spanish                     </span></div><div class="line"><span class="comment"># de   : German                   sv   : Swedish                     </span></div><div class="line"><span class="comment"># el   : Greek                    th   : Thai                        </span></div><div class="line"><span class="comment"># iw   : Hebrew                   zh_TW: Traditional Chinese         </span></div><div class="line"><span class="comment"># hu   : Hungarian                tr   : Turkish                     </span></div><div class="line"><span class="comment"># is   : Icelandic                uk   : Ukrainian                   </span></div><div class="line"><span class="comment"># in   : Indonesian               vi   : Vietnamese                  </span></div><div class="line"><span class="comment"># it   : Italian                                                     </span></div><div class="line"><span class="comment">#  </span></div><div class="line"><span class="comment"># all_langs   : All languages  </span></div><div class="line"><span class="comment">#  </span></div><div class="line"><span class="comment"># Specify value as the following to select any of the languages.  </span></div><div class="line"><span class="comment"># Example : SELECTED_LANGUAGES=en,fr,ja  </span></div><div class="line"><span class="comment">#  </span></div><div class="line"><span class="comment"># Specify value as the following to select all the languages.  </span></div><div class="line"><span class="comment"># Example : SELECTED_LANGUAGES=all_langs    </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">SELECTED_LANGUAGES=en,zh_CN  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the complete path of the Oracle Home.   </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">ORACLE_HOME=/u01/app/oracle  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the complete path of the Oracle Base.   </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">ORACLE_BASE=/u01/app  </div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify the installation edition of the component.                       </span></div><div class="line"><span class="comment">#                                                               </span></div><div class="line"><span class="comment"># The value should contain only one of these choices.    </span></div><div class="line"><span class="comment">#   - EE     : Enterprise Edition   </span></div><div class="line">  </div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.db.InstallEdition=EE  </div><div class="line">  </div><div class="line"><span class="comment">###############################################################################  </span></div><div class="line"><span class="comment">#                                                                             #  </span></div><div class="line"><span class="comment"># PRIVILEGED OPERATING SYSTEM GROUPS                                          #  </span></div><div class="line"><span class="comment"># ------------------------------------------                                  #  </span></div><div class="line"><span class="comment"># Provide values for the OS groups to which OSDBA and OSOPER privileges       #  </span></div><div class="line"><span class="comment"># needs to be granted. If the install is being performed as a member of the   #  </span></div><div class="line"><span class="comment"># group "dba", then that will be used unless specified otherwise below.       #  </span></div><div class="line"><span class="comment">#                                                                             #  </span></div><div class="line"><span class="comment"># The value to be specified for OSDBA and OSOPER group is only for UNIX based #  </span></div><div class="line"><span class="comment"># Operating System.                                                           #  </span></div><div class="line"><span class="comment">#                                                                             #  </span></div><div class="line"><span class="comment">###############################################################################  </span></div><div class="line">  </div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># The DBA_GROUP is the OS group which is to be granted OSDBA privileges.  </span></div><div class="line"><span class="comment">#-------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.db.DBA_GROUP=dba  </div><div class="line">  </div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># The OPER_GROUP is the OS group which is to be granted OSOPER privileges.  </span></div><div class="line"><span class="comment"># The value to be specified for OSOPER group is optional.  </span></div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.db.OPER_GROUP=dba  </div><div class="line">  </div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># The BACKUPDBA_GROUP is the OS group which is to be granted OSBACKUPDBA privileges.  </span></div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.db.BACKUPDBA_GROUP=dba  </div><div class="line">  </div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># The DGDBA_GROUP is the OS group which is to be granted OSDGDBA privileges.  </span></div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.db.DGDBA_GROUP=dba  </div><div class="line">  </div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># The KMDBA_GROUP is the OS group which is to be granted OSKMDBA privileges.  </span></div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line">oracle.install.db.KMDBA_GROUP=dba  </div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line"><span class="comment"># Specify whether user doesn't want to configure Security Updates.  </span></div><div class="line"><span class="comment"># The value for this variable should be true if you don't want to configure  </span></div><div class="line"><span class="comment"># Security Updates, false otherwise.  </span></div><div class="line"><span class="comment">#  </span></div><div class="line"><span class="comment"># The value can be either true or false. If left blank it will be assumed  </span></div><div class="line"><span class="comment"># to be false.  </span></div><div class="line"><span class="comment">#  </span></div><div class="line"><span class="comment"># Example    : DECLINE_SECURITY_UPDATES=false  </span></div><div class="line"><span class="comment">#------------------------------------------------------------------------------  </span></div><div class="line">DECLINE_SECURITY_UPDATES=<span class="literal">true</span></div></pre></td></tr></table></figure></p>
+<h4 id="最后运行-runInstaller-silent-responsefile-home-oracle-db-install-rsp安装即可"><a href="#最后运行-runInstaller-silent-responsefile-home-oracle-db-install-rsp安装即可" class="headerlink" title="最后运行./runInstaller -silent -responsefile /home/oracle/db_install.rsp安装即可"></a>最后运行./runInstaller -silent -responsefile /home/oracle/db_install.rsp安装即可</h4><h3 id="利用DBCA创建数据库"><a href="#利用DBCA创建数据库" class="headerlink" title="利用DBCA创建数据库"></a>利用DBCA创建数据库</h3><p>数据库软件有了之后，建库的方式有很多，例如手工建库，OFM建库以及DBCA静默建库。下面讲一讲相对简单的DBCA静默建库。<br>通过<code>DBCA -HELP</code>命令查看命令参数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[oracle@localhost ~]$ dbca -help  </div><div class="line">  </div><div class="line">dbca  [-silent | -progressOnly] &#123;&lt;<span class="built_in">command</span>&gt; &lt;options&gt; &#125;  | &#123; [&lt;<span class="built_in">command</span>&gt; [options] ] -responseFile  &lt;response file &gt; &#125; [-continueOnNonFatalErrors &lt;<span class="literal">true</span> | <span class="literal">false</span>&gt;]  </div><div class="line">  </div><div class="line"> &lt;<span class="built_in">command</span>&gt; : -createDatabase | -configureDatabase | -createTemplateFromDB | -createCloneTemplate | -generateScripts | -deleteDatabase | -createPluggableDatabase | -unplugDatabase | -deletePluggableDatabase | -configurePluggableDatabase  </div><div class="line">  </div><div class="line">Enter <span class="string">"dbca -&lt;command&gt; -help"</span> <span class="keyword">for</span> more option</div></pre></td></tr></table></figure></p>
+<p>可以看<code>-createDatabase</code>命令既是我们建库需要的了，我们再看看他有哪些参数。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">[oracle@localhost ~]$ dbca -createDatabase -help</div><div class="line">Create a database by specifying the following parameters:  </div><div class="line">    -createDatabase  </div><div class="line">        -templateName &lt;name of an existing template <span class="keyword">in</span> default location or the complete template path&gt;  </div><div class="line">        [-cloneTemplate]  </div><div class="line">        -gdbName &lt;global database name&gt;  </div><div class="line">        [-ignorePreReqs] &lt;ignore prerequisite checks <span class="keyword">for</span> current operation&gt;  </div><div class="line">        [-sid &lt;database system identifier&gt;]  </div><div class="line">        [-createAsContainerDatabase &lt;<span class="literal">true</span>|<span class="literal">false</span>&gt;]  </div><div class="line">            [-numberOfPDBs &lt;Number of Pluggable databases to be created, default is 0&gt;]  </div><div class="line">            [-pdbName &lt;New Pluggable Database Name&gt;]  </div><div class="line">            [-pdbAdminPassword &lt;PDB Administrator user Password, required only when creating new PDB&gt;]  </div><div class="line">        [-sysPassword &lt;SYS user password&gt;]  </div><div class="line">        [-systemPassword &lt;SYSTEM user password&gt;]  </div><div class="line">        [-emConfiguration &lt;DBEXPRESS|CENTRAL|BOTH|NONE&gt;]  </div><div class="line">            -dbsnmpPassword     &lt;DBSNMP user password&gt;  </div><div class="line">            [-omsHost     &lt;EM management server host name&gt;  </div><div class="line">            -omsPort     &lt;EM management server port number&gt;  </div><div class="line">            -emUser     &lt;EM Admin username to add or modify targets&gt;  </div><div class="line">            -emPassword     &lt;EM Admin user password&gt;  </div><div class="line">            -emExpressPort     &lt;EM Database Express port number&gt;]]  </div><div class="line">        [-dvConfiguration &lt;<span class="literal">true</span> | <span class="literal">false</span> Specify <span class="string">"true"</span> to configure and <span class="built_in">enable</span> Database Vault  </div><div class="line">            -dvUserName     &lt;Specify Database Vault Owner user name&gt;  </div><div class="line">            -dvUserPassword     &lt;Specify Database Vault Owner password&gt;  </div><div class="line">            -dvAccountManagerName     &lt;Specify separate Database Vault Account Manager &gt;  </div><div class="line">            -dvAccountManagerPassword     &lt;Specify Database Vault Account Manager password&gt;]  </div><div class="line">        [-olsConfiguration &lt;<span class="literal">true</span> | <span class="literal">false</span> Specify <span class="string">"true"</span> to configure and <span class="built_in">enable</span> Oracle Label Security &gt;  </div><div class="line">        [-datafileDestination &lt;destination directory <span class="keyword">for</span> all database files.&gt; |  </div><div class="line"> -datafileNames &lt;a text file containing database objects such as controlfiles, tablespaces, redo <span class="built_in">log</span> files and spfile to their corresponding raw device file names mappings <span class="keyword">in</span> name=value format.&gt;]  </div><div class="line">        [-redoLogFileSize &lt;size of each redo <span class="built_in">log</span> file <span class="keyword">in</span> megabytes&gt;]  </div><div class="line">        [-recoveryAreaDestination &lt;destination directory <span class="keyword">for</span> all recovery files. Specify <span class="string">"NONE"</span> <span class="keyword">for</span> disabling Fast Recovery Area.&gt;]  </div><div class="line">        [-datafileJarLocation  &lt;location of the data file jar, used only <span class="keyword">for</span> <span class="built_in">clone</span> database creation&gt;]  </div><div class="line">        [-storageType &lt; FS | ASM &gt;  </div><div class="line">            [-asmsnmpPassword     &lt;ASMSNMP password <span class="keyword">for</span> ASM monitoring&gt;]  </div><div class="line">             -diskGroupName   &lt;database area disk group name&gt;  </div><div class="line">             -recoveryGroupName       &lt;recovery area disk group name&gt;  </div><div class="line">        [-characterSet &lt;character <span class="built_in">set</span> <span class="keyword">for</span> the database&gt;]  </div><div class="line">        [-nationalCharacterSet  &lt;national character <span class="built_in">set</span> <span class="keyword">for</span> the database&gt;]  </div><div class="line">        [-registerWithDirService &lt;<span class="literal">true</span> | <span class="literal">false</span>&gt;  </div><div class="line">            -dirServiceUserName    &lt;user name <span class="keyword">for</span> directory service&gt;  </div><div class="line">            -dirServicePassword    &lt;password <span class="keyword">for</span> directory service &gt;  </div><div class="line">            -walletPassword    &lt;password <span class="keyword">for</span> database wallet &gt;]  </div><div class="line">        [-listeners  &lt;list of listeners to configure the database with&gt;]  </div><div class="line">        [-variablesFile   &lt;file name <span class="keyword">for</span> the variable-value pair <span class="keyword">for</span> variables <span class="keyword">in</span> the template&gt;]]  </div><div class="line">        [-variables  &lt;comma separated list of name=value pairs&gt;]  </div><div class="line">        [-initParams &lt;comma separated list of name=value pairs&gt;]  </div><div class="line">        [-sampleSchema  &lt;<span class="literal">true</span> | <span class="literal">false</span>&gt; ]  </div><div class="line">        [-memoryPercentage &lt;percentage of physical memory <span class="keyword">for</span> Oracle&gt;]  </div><div class="line">        [-automaticMemoryManagement &lt;<span class="literal">true</span> | <span class="literal">false</span>&gt; ]  </div><div class="line">        [-totalMemory &lt;memory allocated <span class="keyword">for</span> Oracle <span class="keyword">in</span> MB&gt;]  </div><div class="line">        [-databaseType &lt;MULTIPURPOSE|DATA_WAREHOUSING|OLTP&gt;]]</div></pre></td></tr></table></figure></p>
+<p>一大堆参数，global name 、SID、是否创建容器数据库、数据文件地址、字符集等等参数。根据具体需求选择合适的参数执行<code>dbca -silent -createDatabase [database parameters...]</code>命令即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dbca -silent -createDatabase -templateName <span class="variable">$ORACLE_HOME</span>/assistants/dbca/templates/General_Purpose.dbc -gdbName orcogg -sid orcogg -createAsContainerDatabase <span class="literal">true</span> -numberOfPDBs 1 -pdbName pdbogg -pdbAdminPassword wonderscd -sysPassword wonderscd -systemPassword wonderscd -datafileDestination /u01/data_files -characterSet GBK16 -automaticMemoryManagement <span class="literal">true</span></div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>最后PS：<br>（1）依赖包的检测本应该在一开始就检查的，但是我有一个坏毛病每次都是安装时看它提示缺什么包之后再去安装。<br>（2）各系统需要的package的传送门：<a href="http://docs.oracle.com/database/121/LTCQI/toc.htm#CHDJIDDD" target="_blank" rel="external">http://docs.oracle.com/database/121/LTCQI/toc.htm#CHDJIDDD</a><br>（3）安装失败时候主要看看日志中先决条件测试那部分的日志，是否所有先决条件测试都success了</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/oracle/" rel="tag"># oracle</a>
+          
+            <a href="/tags/装软件的程序员/" rel="tag"># 装软件的程序员</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/07/浅谈java初始化/" rel="next" title="java基础回顾——浅谈java初始化">
+                <i class="fa fa-chevron-left"></i> java基础回顾——浅谈java初始化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#静默安装ORACLE数据库软件"><span class="nav-number">1.</span> <span class="nav-text">静默安装ORACLE数据库软件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置内核参数（root用户）"><span class="nav-number">1.1.</span> <span class="nav-text">配置内核参数（root用户）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置资源限制（root用户）"><span class="nav-number">1.2.</span> <span class="nav-text">配置资源限制（root用户）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建用户组和用户组（root用户）"><span class="nav-number">1.3.</span> <span class="nav-text">创建用户组和用户组（root用户）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置环境变量（oracle用户）"><span class="nav-number">1.4.</span> <span class="nav-text">配置环境变量（oracle用户）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置响应文件"><span class="nav-number">1.5.</span> <span class="nav-text">配置响应文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最后运行-runInstaller-silent-responsefile-home-oracle-db-install-rsp安装即可"><span class="nav-number">1.6.</span> <span class="nav-text">最后运行./runInstaller -silent -responsefile /home/oracle/db_install.rsp安装即可</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用DBCA创建数据库"><span class="nav-number">2.</span> <span class="nav-text">利用DBCA创建数据库</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
