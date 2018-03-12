@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="java,spark,scala," />
+  <meta name="keywords" content="ORACLE,宕机恢复," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：dropDuplicates(scala.collection.Seq&amp;lt;String&amp;gt; colNames)、dropDuplicates(String[] colNames)、dropDupli">
-<meta name="keywords" content="java,spark,scala">
+<meta name="description" content="上午一实施哥们来求救说一个做ETL的数据库无法启动了，出现了ORA-00600的错误。之前也遇到过几次ORA-00600内部错误的问题，几次都是因为数据库服务器异常断电导致的，这类错误一般是oracle自己内部的bug。下面记录下解决的过程：">
+<meta name="keywords" content="ORACLE,宕机恢复">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dataset根据指定列去重保留最后一条数据">
-<meta property="og:url" content="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/index.html">
+<meta property="og:title" content="ORA-00600-[kcratr_nab_less_than_odr]问题解决小记">
+<meta property="og:url" content="http://yoursite.com/2018/03/12/ORA-00600-kcratr-nab-less-than-odr-问题解决小记/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：dropDuplicates(scala.collection.Seq&amp;lt;String&amp;gt; colNames)、dropDuplicates(String[] colNames)、dropDupli">
-<meta property="og:updated_time" content="2017-09-08T13:21:34.043Z">
+<meta property="og:description" content="上午一实施哥们来求救说一个做ETL的数据库无法启动了，出现了ORA-00600的错误。之前也遇到过几次ORA-00600内部错误的问题，几次都是因为数据库服务器异常断电导致的，这类错误一般是oracle自己内部的bug。下面记录下解决的过程：">
+<meta property="og:updated_time" content="2018-03-12T12:51:51.461Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dataset根据指定列去重保留最后一条数据">
-<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;单纯的对Dataset去重可以采用spark的API中的dropDuplicate()方法以及可以指定列名的4个重载方法：dropDuplicates(scala.collection.Seq&amp;lt;String&amp;gt; colNames)、dropDuplicates(String[] colNames)、dropDupli">
+<meta name="twitter:title" content="ORA-00600-[kcratr_nab_less_than_odr]问题解决小记">
+<meta name="twitter:description" content="上午一实施哥们来求救说一个做ETL的数据库无法启动了，出现了ORA-00600的错误。之前也遇到过几次ORA-00600内部错误的问题，几次都是因为数据库服务器异常断电导致的，这类错误一般是oracle自己内部的bug。下面记录下解决的过程：">
 
 
 
@@ -131,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/03/12/ORA-00600-kcratr-nab-less-than-odr-问题解决小记/"/>
 
 
 
 
 
-  <title>Dataset根据指定列去重保留最后一条数据 | 木乃伊、</title>
+  <title>ORA-00600-[kcratr_nab_less_than_odr]问题解决小记 | 木乃伊、</title>
   
 
 
@@ -276,7 +276,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/03/Dataset根据指定列去重保留最后一条数据/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/12/ORA-00600-kcratr-nab-less-than-odr-问题解决小记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="L4J">
@@ -293,7 +293,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Dataset根据指定列去重保留最后一条数据</h1>
+          <h1 class="post-title" itemprop="name headline">ORA-00600-[kcratr_nab_less_than_odr]问题解决小记</h1>
         
 
         <div class="post-meta">
@@ -305,8 +305,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-03T09:13:32+08:00">
-                2017-09-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-12T18:53:09+08:00">
+                2018-03-12
               </time>
             
 
@@ -328,8 +328,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/spark/" itemprop="url" rel="index">
-                    <span itemprop="name">spark</span>
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
                   </a>
                 </span>
 
@@ -367,12 +367,12 @@
       
 
       
-        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单纯的对Dataset去重可以采用spark的API中的<code>dropDuplicate()</code>方法以及可以指定列名的4个重载方法：<code>dropDuplicates(scala.collection.Seq&lt;String&gt; colNames)</code>、<code>dropDuplicates(String[] colNames)</code>、<code>dropDuplicates(String col1, scala.collection.Seq&lt;String&gt; cols)</code>、<code>dropDuplicates(String col1, String... cols)</code>，返回值都是去重后的新的Dataset。但是有时候我们需要根据指定列去重后保留最后一条数据，采用dropDuplicate()方法就无法实现了。这时候我们可以将指定的列作为key（如果值过长，可以对其进行HASH，进行压缩映射），转换原数据为mapPartionsRDD，然后再reduceByKey进行去重，保留最后的一条数据。<br><a id="more"></a><br><strong> java版实现: </strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> String[] keys = view.getPrimKeys();<span class="comment">//获取主键  </span></div><div class="line">JavaPairRDD&lt;String, Row&gt; reducePairRDD = viewRDD.toJavaRDD().mapToPair(  </div><div class="line">    <span class="keyword">new</span> PairFunction&lt;Row, String, Row&gt;() &#123;  </div><div class="line">        <span class="function"><span class="keyword">public</span> Tuple2&lt;String, Row&gt; <span class="title">call</span><span class="params">(Row row)</span> <span class="keyword">throws</span> Exception </span>&#123;  </div><div class="line">            String key = <span class="string">""</span>;  </div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; keys.length; i++) &#123;  </div><div class="line">                key += row.getAs(keys[i]);  </div><div class="line">            &#125;  </div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;String, Row&gt;(key, row);  </div><div class="line">        &#125;  </div><div class="line">    &#125;  </div><div class="line">).reduceByKey(<span class="keyword">new</span> Function2&lt;Row, Row, Row&gt;() &#123;  </div><div class="line">	<span class="function"><span class="keyword">public</span> Row <span class="title">call</span><span class="params">(Row row, Row row2)</span> <span class="keyword">throws</span> Exception </span>&#123;  </div><div class="line">		<span class="keyword">return</span> row2;</div><div class="line">	&#125;</div><div class="line">&#125;).values;</div></pre></td></tr></table></figure></p>
-<p><strong> scala版实现： </strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">val unRdd = ds.rdd.map(line=&gt;((line.getAs[String](<span class="string">"col1"</span>)+line.getAs[String](<span class="string">"col2"</span>)),line)).reduceByKey((x,y)=&gt;y,<span class="number">6</span>).map(_._2)</div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在对Dataset转换成mapPartitionsRDD时也可以使用keyBy():<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">keyBy()</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;U&gt; <span class="function">JavaPairRDD&lt;U,T&gt; <span class="title">keyBy</span><span class="params">(Function&lt;T,U&gt; f)</span></span></div></pre></td></tr></table></figure></p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于keyBy()和mapToPair()两个方法的本质并没有区别:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//mapToPair实现源码</span></div><div class="line">def mapToPair[K2, V2](f: PairFunction[T, K2, V2]): JavaPairRDD[K2, V2] = &#123;</div><div class="line">	def cm: ClassTag[(K2, V2)] = implicitly[ClassTag[(K2, V2)]]</div><div class="line">	<span class="keyword">new</span> JavaPairRDD(rdd.map[(K2, V2)](f)(cm))(fakeClassTag[K2], fakeClassTag[V2])</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//keyBy()实现源码</span></div><div class="line">def keyBy[U](f: JFunction[T, U]): JavaPairRDD[U, T] = &#123;  </div><div class="line">	implicit val ctag: ClassTag[U] = fakeClassTag  </div><div class="line">	JavaPairRDD.fromRDD(rdd.keyBy(f))  </div><div class="line">&#125; </div><div class="line"><span class="comment">//它会调用下面的keyBy方法  </span></div><div class="line">def keyBy[K](f: T =&gt; K): RDD[(K, T)] = withScope &#123;  </div><div class="line"> 	val cleanedF = sc.clean(f)  </div><div class="line"> 	map(x =&gt; (cleanedF(x), x))  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以看到两个方法都是使用rdd.map方法来生成新的RDD。</p>
+        <p>上午一实施哥们来求救说一个做ETL的数据库无法启动了，出现了ORA-00600的错误。之前也遇到过几次ORA-00600内部错误的问题，几次都是因为数据库服务器异常断电导致的，这类错误一般是oracle自己内部的bug。下面记录下解决的过程：<br><a id="more"></a><br>1、先将数据库启动到mount状态，没有问题，说明数据库成功的打开控制文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">SQL&gt; startup mount</div><div class="line">ORACLE instance started.</div><div class="line"></div><div class="line">Total System Global Area 8217530368 bytes</div><div class="line">Fixed Size		    2214856 bytes</div><div class="line">Variable Size		 5100274744 bytes</div><div class="line">Database Buffers	 3087007744 bytes</div><div class="line">Redo Buffers		   28033024 bytes</div><div class="line">Database mounted.</div></pre></td></tr></table></figure></p>
+<p>2、尝试open数据库，此时主要会读取数据文件、redo日志等。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">SQL&gt; alter database open;   </div><div class="line">alter database open</div><div class="line">*</div><div class="line">ERROR at line 1:</div><div class="line">ORA-00600: internal error code, arguments: [kcratr_nab_less_than_odr], [1],</div><div class="line">[4252], [17024], [17032], [], [], [], [], [], [], []</div></pre></td></tr></table></figure></p>
+<p>此时提示了<code>ORA-00600: internal error code</code>错误信息，这类错误一般是oracle自己内部的bug，在12C之后就没有了。此类信息的重点在<code>arguments</code>之后，但是一般也没有很具体的信息，此时我们可以在<code>trace</code>目录查看alert日志，若信息还不够明确，再根据alter log中相应的trc文件获取具体信息。<br>之前也遇到过类似的情况，看到<code>arguments: [kcratr_nab_less_than_odr]</code>也就明白了原因——服务器异常断电，导致LGWR写联机日志文件时失败，由于数据库异常停机，所以启动的时候需要做实例级恢复，因为写联机日志失败所以无法从中获取这些redo信息。说说<code>ORA-00600: internal error code, arguments: [kcratr_nab_less_than_odr], [1],[4252], [17024], [17032]</code>的意思：1号线程实例需要恢复日志序列号为4252的联机日志文件，需要恢复到编号为17032的日志块，而实际上只能恢复到第17024个日志块。<br>3、下面看看怎么解决。查看当前日志文件信息：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SQL&gt; select group<span class="comment">#,sequence#,status,first_time,next_change# from v$log;</span></div><div class="line"> </div><div class="line">    GROUP<span class="comment">#  SEQUENCE# STATUS	       FIRST_TIM NEXT_CHANGE#</span></div><div class="line">---------- ---------- ---------------- --------- ------------</div><div class="line">	 1	 4252 CURRENT	       06-MAR-18   2.8147E+14</div><div class="line">	 3	 4251 INACTIVE	       06-MAR-18   4.9009E+12</div><div class="line">	 2	 4250 INACTIVE	       06-MAR-18   4.9009E+12</div></pre></td></tr></table></figure></p>
+<p>当前日志组组号为1，再通过<code>v$logfile</code>查看组号为1的redo日志的文件位置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SQL&gt; select * from v<span class="variable">$logfile</span>;</div><div class="line"></div><div class="line">    GROUP<span class="comment"># STATUS  TYPE    MEMBER                         </span></div><div class="line">---------- ------- ------- ------------------------------ </div><div class="line">         1         ONLINE  /home/wonders/app/wonders/oradata/orcl/redo01.log    </div><div class="line">         3         ONLINE  /home/wonders/app/wonders/oradata/orcl/redo03.log        </div><div class="line">         2         ONLINE  /home/wonders/app/wonders/oradata/orcl/redo02.log</div></pre></td></tr></table></figure></p>
+<p>指定<code>redo1.log</code>恢复数据库<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">SQL&gt; recover database until cancel using backup controlfile;</div><div class="line">ORA-00279: change 4900911271334 generated at 03/06/2018 05:46:29 needed <span class="keyword">for</span></div><div class="line">thread 1</div><div class="line">ORA-00289: suggestion :</div><div class="line">/home/wonders/app/wonders/flash_recovery_area/ORCL/archivelog/2018_03_12/o1_mf_1</div><div class="line">_4252_%u_.arc</div><div class="line">ORA-00280: change 4900911271334 <span class="keyword">for</span> thread 1 is <span class="keyword">in</span> sequence <span class="comment">#4252</span></div><div class="line"></div><div class="line"></div><div class="line">Specify <span class="built_in">log</span>: &#123;&lt;RET&gt;=suggested | filename | AUTO | CANCEL&#125;</div><div class="line">/home/wonders/app/wonders/oradata/orcl/redo01.log</div><div class="line">Log applied.</div><div class="line">Media recovery complete.</div></pre></td></tr></table></figure></p>
+<p>恢复完成后必须以RESETLOGS方式打开数据库<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SQL&gt; alter database open resetlogs;</div><div class="line"></div><div class="line">Database altered.</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -402,11 +402,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/java/" rel="tag"># java</a>
+            <a href="/tags/ORACLE/" rel="tag"># ORACLE</a>
           
-            <a href="/tags/spark/" rel="tag"># spark</a>
-          
-            <a href="/tags/scala/" rel="tag"># scala</a>
+            <a href="/tags/宕机恢复/" rel="tag"># 宕机恢复</a>
           
         </div>
       
@@ -419,15 +417,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/03/11/静默安装ORACLE数据库/" rel="next" title="静默安装ORACLE数据库">
+                <i class="fa fa-chevron-left"></i> 静默安装ORACLE数据库
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/06/JAVA反射简介/" rel="prev" title="JAVA反射机制">
-                JAVA反射机制 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
