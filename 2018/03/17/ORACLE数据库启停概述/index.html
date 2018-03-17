@@ -1,0 +1,801 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="oracle," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这段时间有点迷惘，不知道接下来干嘛了。想辞职，重新找一份java开发相关的工作，也就意味着这一年多数据库运维、开发的经验就浪费了，而且换到java岗我是否就真的热爱这份职业呢？真不知道干嘛了，毕业一年多，走走停停，各种折腾，24岁了，一无所成。最近迷上了一首歌4 Non Blon">
+<meta name="keywords" content="oracle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ORACLE数据库启停概述">
+<meta property="og:url" content="http://yoursite.com/2018/03/17/ORACLE数据库启停概述/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这段时间有点迷惘，不知道接下来干嘛了。想辞职，重新找一份java开发相关的工作，也就意味着这一年多数据库运维、开发的经验就浪费了，而且换到java岗我是否就真的热爱这份职业呢？真不知道干嘛了，毕业一年多，走走停停，各种折腾，24岁了，一无所成。最近迷上了一首歌4 Non Blon">
+<meta property="og:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt325.gif">
+<meta property="og:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt212.gif">
+<meta property="og:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt281.gif">
+<meta property="og:updated_time" content="2018-03-17T07:15:40.274Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ORACLE数据库启停概述">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这段时间有点迷惘，不知道接下来干嘛了。想辞职，重新找一份java开发相关的工作，也就意味着这一年多数据库运维、开发的经验就浪费了，而且换到java岗我是否就真的热爱这份职业呢？真不知道干嘛了，毕业一年多，走走停停，各种折腾，24岁了，一无所成。最近迷上了一首歌4 Non Blon">
+<meta name="twitter:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt325.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/17/ORACLE数据库启停概述/"/>
+
+
+
+
+
+  <title>ORACLE数据库启停概述 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/17/ORACLE数据库启停概述/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ORACLE数据库启停概述</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-17T11:14:42+08:00">
+                2018-03-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这段时间有点迷惘，不知道接下来干嘛了。想辞职，重新找一份java开发相关的工作，也就意味着这一年多数据库运维、开发的经验就浪费了，而且换到java岗我是否就真的热爱这份职业呢？真不知道干嘛了，毕业一年多，走走停停，各种折腾，24岁了，一无所成。最近迷上了一首歌<code>4 Non Blondes - What&#39;s Up</code>唱出了自己的迷茫与无措，希望在25岁的时候听到这首歌是不一样的感觉。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;只要使用过oracle database，那么肯定执行过很多次的<code>startup</code>和<code>shutdown</code>的操作，但是你是否关心过这个过程发生了什么？这篇文章主要讲讲oracle启动与停止过程oracle后台发生的事情。<br><a id="more"></a></p>
+<h3 id="实例与数据库"><a href="#实例与数据库" class="headerlink" title="实例与数据库"></a>实例与数据库</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首先需要弄清楚一些概念性的东西。我们平时只会说数据库是否启动，关闭很少用到实例的概念，说到实例，或许你想到的只是<code>SID</code>这个词。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实例和数据库是两个独立却又相互关联的两个不同的东西，他们都可以独立于彼此而存在。实例存在于内存，包含一大堆后台进程，而数据库存在于磁盘中。数据库和实例的关系可以是<code>one to one</code>或者<code>one to many</code>(例如RAC就是<code>one to many</code>的)，但是绝对不存在一个实例对应多个数据库的情况。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实例启动的时候，会为其分配一个叫System Global Area(SGA)的系统全局区的内存区域以及一系列的后台进程，它们的主要任务是：</p>
+<ul>
+<li>维护对内部数据的并发访问</li>
+<li>缓存数据块</li>
+<li>缓存未写入联机重做日志文件的重做数据</li>
+<li>存储SQL的执行计划</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下图展示了oracle实例的主要组件(图片来自oracle concept)：<br><img src="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt325.gif" alt="avatar"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;每个主机上可以创建多个数据库实例，ORACLE通过<code>system identifier(SID)</code>来唯一标识一个实例。Linux或者Unix下可以通过<code>ORACLE_SID</code>环境变量设置该主机访问的默认<code>SID</code>，当我们通过SQL Net访问数据库时也需要指定ORACLE SID。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在我们安装oracle数据库时，我们会设置两个环境变量，一个是<code>ORACLE_BASE</code>，以及<code>ORACLE_HOME</code>。<code>ORACLE_BASE</code>是安装oracle二进制文件的目录,<code>ORACLE_HOME</code>是数据库软件的安装目录，位于<code>ORACLE_BASE</code>子目录，我们可以在同一个主机上安装不同的数据库软件在独立的<code>ORACLE_HOME</code>下。</p>
+<h3 id="从执行startup到可以访问数据库"><a href="#从执行startup到可以访问数据库" class="headerlink" title="从执行startup到可以访问数据库"></a>从执行startup到可以访问数据库</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库的启动包括了四个阶段：从SHUTDOWN-&gt;NOMOUNT-&gt;MOUNT-&gt;OPEN,如下图(图片来自ORACLE CONCEPT)：<br><img src="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt212.gif" alt="avatar"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可以使用<code>STARTUP NOMOUNT</code>、<code>STARTUP MOUNT</code>和<code>STARTUP</code>启动到各个不同的状态。</p>
+<h4 id="NOMOUNT"><a href="#NOMOUNT" class="headerlink" title="NOMOUNT"></a>NOMOUNT</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>STARTUP NOMOUNT</code>只进行instance的启动，该状态下可以执行数据库的创建、备份以及恢复操作，该阶段会依次完成以下操作：</p>
+<ul>
+<li>在默认位置查找<code>server parameter file(spfile)</code>,若读取不到，则进一步查找文本格式的<code>initialization parameter file(pfile)</code>，读取参数文件的初始化参数。</li>
+<li>根据参数文件的设置，分配SGA。</li>
+<li>启动后台进程</li>
+<li>打开<code>alter log</code>以及<code>trace file</code>写入显示参数设置。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pfile参数文件一般默认在<code>ORACLE_HOME/dbs</code>目录下，以init+${ORACLE_SID}.ora方式命名。其中包含了控制文件位置、adump文件地址、UNDO表空间、兼容版本、DB_NAME、内存分配信息等。 实例启动时首先尝试读取spfile，获取失败，再寻找文本格式的pfile，都获取不到则启动失败。此时可以通过以下方式启动实例：<br>1、通常数据库中会存在一份pfile的克隆文件，文件名以<code>init.ora.数字</code>的方式命名，通过<code>STARTUP PFILE=&#39;克隆参数文件地址&#39;</code>方式启动。<br>2、手动重建参数文件。参数文件的创建还是很简单的，注意<code>__oracle_base</code>、<code>*.audit_file_dest</code>、<code>*.control_files</code>、<code>*.db_recovery_file_dest</code>、<code>*.db_name</code>、<code>*.diagnostic_dest</code>即可,其他非默认参数可以在trace文件中获取，创建pfile，然后指定pfile启动即可。<br>以上步骤完成后需执行<code>create spfile from pfile</code>命令，否则下次启动时仍需以指定pfile的方式才能启动。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当实例启动后，具备<code>SYSDBA</code>、<code>SYSOPER</code>、<code>SYSBACKUP</code>、<code>SYSDG</code>、<code>SYSKM</code>权限的用户就可以登录了。</p>
+<h4 id="MOUNT"><a href="#MOUNT" class="headerlink" title="MOUNT"></a>MOUNT</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该阶段创建实例与数据库之间的关联。实例通过<code>*.control_files</code>定位控制文件位置，并打开控制文件读取数据库相关信息，包括数据文件、redo日志在磁盘中的位置以及名称。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;控制文件是实例与数据库沟通的桥梁，控制文件丢失将导致实例无法访问到数据库的信息，从而无法装载数据库。关于控制文件的重建，可以查看我之前写的一篇博文，<a href="http://l4j.cc/2017/09/08/ORACLE%E9%87%8D%E5%BB%BA%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6/" target="_blank" rel="external">重建控制文件</a>。控制文件的重建需要定位所有数据文件以及redo日志的位置。</p>
+<h4 id="OPEN"><a href="#OPEN" class="headerlink" title="OPEN"></a>OPEN</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;只有启动到OPEN状态我们才能对数据库进行正常的操作，这时普通用户才能登陆数据库。当OPEN数据库时，首先会打开除undo以外的，处于<code>online</code>状态的数据文件；然后打开undo数据文件；最后才是打开在线重做日志文件。如果我们关闭数据库的执行<code>shutdown abort</code>，那么在这一步将执行实例恢复的操作。在这个过程我们容易遇到的主要问题有，数据文件的丢失、损坏等情况。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在11G中存在服务器异常关闭后无法自动完成实例恢复的bug，需要手动的完成实例恢复。</p>
+<h3 id="从OPEN到SHUTDOWN"><a href="#从OPEN到SHUTDOWN" class="headerlink" title="从OPEN到SHUTDOWN"></a>从OPEN到SHUTDOWN</h3><p>首先看下oracle concept中SHUTDOWN数据库的顺序图：<br><img src="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt281.gif" alt="avatar"><br>首先会关闭数据文件以及联机重做日志，然后关闭控制文件到<code>NOMOUNT</code>状态，此时实例仍在运行，最后shutdown实例。</p>
+<h4 id="SHUTODOWN模式"><a href="#SHUTODOWN模式" class="headerlink" title="SHUTODOWN模式"></a>SHUTODOWN模式</h4><p>shutdown命令有<code>ABORT</code>、<code>IMMEDIATE</code>、<code>TRANSACTIONAL</code>、<code>NORMAL</code>四种模式，其产生的行为如下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Database Behavior</th>
+<th style="text-align:center">ABORT</th>
+<th style="text-align:center">IMMEDIATE</th>
+<th style="text-align:center">TRANSACTIONAL</th>
+<th style="text-align:center">NORMAL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Permits new userconnections</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+</tr>
+<tr>
+<td style="text-align:center">Waits until current sessions end</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Waits until current transactions end</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+</tr>
+<tr>
+<td style="text-align:center">Performs a checkpoint and closes open files</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+</tr>
+</tbody>
+</table>
+<p><code>SHUTDOWN ABORT</code>仅在迫不得已的情况下才使用，例如其他三种模式均无法关闭数据库。该模式不会将checkpoint写入数据文件的header中，也会不将SGA中的缓存的数据写入数据文件和联机重做日志中，当启动数据库时需要进行实例恢复。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/oracle/" rel="tag"># oracle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/12/ORA-00600-kcratr-nab-less-than-odr-问题解决小记/" rel="next" title="ORA-00600-[kcratr_nab_less_than_odr]问题小记">
+                <i class="fa fa-chevron-left"></i> ORA-00600-[kcratr_nab_less_than_odr]问题小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例与数据库"><span class="nav-number">1.</span> <span class="nav-text">实例与数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从执行startup到可以访问数据库"><span class="nav-number">2.</span> <span class="nav-text">从执行startup到可以访问数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NOMOUNT"><span class="nav-number">2.1.</span> <span class="nav-text">NOMOUNT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MOUNT"><span class="nav-number">2.2.</span> <span class="nav-text">MOUNT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OPEN"><span class="nav-number">2.3.</span> <span class="nav-text">OPEN</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从OPEN到SHUTDOWN"><span class="nav-number">3.</span> <span class="nav-text">从OPEN到SHUTDOWN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SHUTODOWN模式"><span class="nav-number">3.1.</span> <span class="nav-text">SHUTODOWN模式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
