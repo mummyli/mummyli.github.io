@@ -103,7 +103,7 @@
 <meta property="og:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt325.gif">
 <meta property="og:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt212.gif">
 <meta property="og:image" content="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/img/cncpt281.gif">
-<meta property="og:updated_time" content="2018-03-17T07:15:40.274Z">
+<meta property="og:updated_time" content="2018-03-17T08:22:24.907Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ORACLE数据库启停概述">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这段时间有点迷惘，不知道接下来干嘛了。想辞职，重新找一份java开发相关的工作，也就意味着这一年多数据库运维、开发的经验就浪费了，而且换到java岗我是否就真的热爱这份职业呢？真不知道干嘛了，毕业一年多，走走停停，各种折腾，24岁了，一无所成。最近迷上了一首歌4 Non Blon">
@@ -434,7 +434,8 @@
 </tr>
 </tbody>
 </table>
-<p><code>SHUTDOWN ABORT</code>仅在迫不得已的情况下才使用，例如其他三种模式均无法关闭数据库。该模式不会将checkpoint写入数据文件的header中，也会不将SGA中的缓存的数据写入数据文件和联机重做日志中，当启动数据库时需要进行实例恢复。</p>
+<p><code>SHUTDOWN ABORT</code>仅在迫不得已的情况下才使用，例如其他三种模式均无法关闭数据库。该模式不会将checkpoint写入数据文件的header中，也会不将SGA中的缓存的数据写入数据文件和联机重做日志中、以及对当前事物进行回滚，当启动数据库时需要进行实例恢复。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库启动时涉及到的参数文件以及控制文件，虽然后期都能手动重建，但是还是需要耗费一些时间的，特别是控制文件的重建。建议在日常的运维中，对控制文件和参数文件都进行一下备份，平时多花一些时间，可以让我们在遇到数据库宕机时节省很多时间。对于控制文件，我们可以创建多份控制文件，放置在不同的磁盘即可。当我们执行<code>alter system</code>命令修改参数时使用<code>scope=both</code>，将修改的参数同时写入spfile和pfile，并对pfile进行备份。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理解数据库启动各个阶段执行的操作，对于我们快速定位无法启动数据库还是很有必要的，只有理解了每个阶段实例会进行哪些操作，我们能大大缩小数据库无法启动到下一个阶段的问题范围。</p>
 
       
     </div>
@@ -616,7 +617,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例与数据库"><span class="nav-number">1.</span> <span class="nav-text">实例与数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从执行startup到可以访问数据库"><span class="nav-number">2.</span> <span class="nav-text">从执行startup到可以访问数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NOMOUNT"><span class="nav-number">2.1.</span> <span class="nav-text">NOMOUNT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MOUNT"><span class="nav-number">2.2.</span> <span class="nav-text">MOUNT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OPEN"><span class="nav-number">2.3.</span> <span class="nav-text">OPEN</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从OPEN到SHUTDOWN"><span class="nav-number">3.</span> <span class="nav-text">从OPEN到SHUTDOWN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SHUTODOWN模式"><span class="nav-number">3.1.</span> <span class="nav-text">SHUTODOWN模式</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例与数据库"><span class="nav-number">1.</span> <span class="nav-text">实例与数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从执行startup到可以访问数据库"><span class="nav-number">2.</span> <span class="nav-text">从执行startup到可以访问数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NOMOUNT"><span class="nav-number">2.1.</span> <span class="nav-text">NOMOUNT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MOUNT"><span class="nav-number">2.2.</span> <span class="nav-text">MOUNT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OPEN"><span class="nav-number">2.3.</span> <span class="nav-text">OPEN</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从OPEN到SHUTDOWN"><span class="nav-number">3.</span> <span class="nav-text">从OPEN到SHUTDOWN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SHUTODOWN模式"><span class="nav-number">3.1.</span> <span class="nav-text">SHUTODOWN模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
             
 
           </div>
