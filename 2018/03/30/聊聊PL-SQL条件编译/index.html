@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/03/30/聊聊PL-SQL条件编译/index.html">
 <meta property="og:site_name" content="木乃伊、">
 <meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;说说PL/SQL一个比较冷门但是很强大的东西——条件编译，顾名思义，条件编译就是根据不同的条件编译PL/SQL应用而无需移除源码中的文本。比如，根据不同的数据库版本，编译不同的源码；在开发环境中用于debug的语句，当在生产环境部署时不编译该部分语句。">
-<meta property="og:updated_time" content="2018-03-30T14:36:26.475Z">
+<meta property="og:updated_time" content="2018-03-30T15:04:41.622Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊PL&#x2F;SQL条件编译">
 <meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;说说PL/SQL一个比较冷门但是很强大的东西——条件编译，顾名思义，条件编译就是根据不同的条件编译PL/SQL应用而无需移除源码中的文本。比如，根据不同的数据库版本，编译不同的源码；在开发环境中用于debug的语句，当在生产环境部署时不编译该部分语句。">
@@ -372,10 +372,10 @@
 <blockquote>
 <ul>
 <li>$IF</li>
-<li>THEN</li>
-<li>ELSE</li>
-<li>ELIF</li>
-<li>ERROR</li>
+<li>$THEN</li>
+<li>$ELSE</li>
+<li>$ELIF</li>
+<li>$ERROR</li>
 </ul>
 </blockquote>
 <p>通过这些指令我们就可以完成编译的选择以及错误指令，基本语法如下：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$IF boolean_static_expression $THEN</div><div class="line">   text</div><div class="line">[ $ELSIF boolean_static_expression $THEN</div><div class="line">   text</div><div class="line">   $ERROR 'unsupported database <span class="keyword">release</span><span class="string">' $END</span></div><div class="line">]...</div><div class="line">[ $ELSE</div><div class="line">   text</div><div class="line">$END</div><div class="line">]</div></pre></td></tr></table></figure></p>
