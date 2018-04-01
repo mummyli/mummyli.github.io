@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/04/01/PL-SQL数据类型关注点/index.html">
 <meta property="og:site_name" content="木乃伊、">
 <meta property="og:description" content="数据类型决定了它的存储格式、有效值范围以及可以对它进行的操作。本文主要记录一些PL/SQL中标量数据类型需要注意的一些点。首先简单解释下什么是标量数据类型，当第一次在ORACLE官方文档中看到这个词的时候也是有点懵的。ORACLE对其的解释是store values with no internal components，意思是标量数据类型只有一个值，没有内部分量，比如VARCHAR2、BOOLE">
-<meta property="og:updated_time" content="2018-04-01T09:19:53.037Z">
+<meta property="og:updated_time" content="2018-04-01T09:26:27.934Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PL&#x2F;SQL数据类型关注点">
 <meta name="twitter:description" content="数据类型决定了它的存储格式、有效值范围以及可以对它进行的操作。本文主要记录一些PL/SQL中标量数据类型需要注意的一些点。首先简单解释下什么是标量数据类型，当第一次在ORACLE官方文档中看到这个词的时候也是有点懵的。ORACLE对其的解释是store values with no internal components，意思是标量数据类型只有一个值，没有内部分量，比如VARCHAR2、BOOLE">
@@ -379,10 +379,7 @@
 </ul>
 </blockquote>
 <h3 id="CHAR和VARCHAR2"><a href="#CHAR和VARCHAR2" class="headerlink" title="CHAR和VARCHAR2"></a>CHAR和VARCHAR2</h3><p>CHAR数据类型会用空格对接收到的字符补齐到它定义的最大长度，VARCHAR2不会。即CHAR是定长的，而varchar2是可变长度的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">DECLARE</div><div class="line">  p_char  CHAR(10 CHAR);</div><div class="line">  p_varchar2   VARCHAR2(10 CHAR);</div><div class="line">BEGIN</div><div class="line">  p_char := &apos;char&apos;;</div><div class="line">  p_varchar2  := &apos;varchar2&apos;;</div><div class="line"> </div><div class="line">  DBMS_OUTPUT.PUT_LINE(&apos;*&apos; || p_char || &apos;*&apos;);</div><div class="line">  DBMS_OUTPUT.PUT_LINE(&apos;*&apos; || p_varchar2 || &apos;*&apos;);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
-<p>输出如下：</p>
-<blockquote>
-<p><em>char      </em><br><em>varchar2</em></p>
-</blockquote>
+<p>输出如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">*char      *</div><div class="line">*varchar2*</div></pre></td></tr></table></figure></p>
 <p>在SQL数据类型中还有一个用于保存字符的数据类型——VARCHAR，在目前的版本中，它VARCHAR2完全一样的。在未来的发布版本中有可能会将其独立为单独的数据类型，以兼容新的数据SQL标准。</p>
 <h3 id="用PLS-INTEGER取代NUMBER"><a href="#用PLS-INTEGER取代NUMBER" class="headerlink" title="用PLS_INTEGER取代NUMBER"></a>用PLS_INTEGER取代NUMBER</h3><p>当需要进行大量的数据计算的时候建议使用PLS_INTEGER来取代NUMBER数据类型。它相比NUMBER具有以下优势：</p>
 <ul>
