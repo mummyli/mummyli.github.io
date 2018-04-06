@@ -1,0 +1,869 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ORACLE,PL/SQL," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;PL/SQL中我们可以定义两种属性数据类型：COLLECTION和RECORDS。属性数据类型的内部成员可以是标量数据类型也可以是属性数据类型。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;集合数据类型的内部由相同数据类型的元素组成，我们可以通过它的唯一索引以variable_name(index)的">
+<meta name="keywords" content="ORACLE,PL&#x2F;SQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PL&#x2F;SQL数据类型——COLLECTION">
+<meta property="og:url" content="http://yoursite.com/2018/04/06/PL-SQL数据类型——COLLECTION/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;PL/SQL中我们可以定义两种属性数据类型：COLLECTION和RECORDS。属性数据类型的内部成员可以是标量数据类型也可以是属性数据类型。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;集合数据类型的内部由相同数据类型的元素组成，我们可以通过它的唯一索引以variable_name(index)的">
+<meta property="og:updated_time" content="2018-04-06T13:43:06.540Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PL&#x2F;SQL数据类型——COLLECTION">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;PL/SQL中我们可以定义两种属性数据类型：COLLECTION和RECORDS。属性数据类型的内部成员可以是标量数据类型也可以是属性数据类型。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;集合数据类型的内部由相同数据类型的元素组成，我们可以通过它的唯一索引以variable_name(index)的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/06/PL-SQL数据类型——COLLECTION/"/>
+
+
+
+
+
+  <title>PL/SQL数据类型——COLLECTION | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/06/PL-SQL数据类型——COLLECTION/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PL/SQL数据类型——COLLECTION</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-06T09:56:09+08:00">
+                2018-04-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PL/SQL中我们可以定义两种属性数据类型：COLLECTION和RECORDS。属性数据类型的内部成员可以是标量数据类型也可以是属性数据类型。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;集合数据类型的内部由相同数据类型的元素组成，我们可以通过它的唯一索引以<code>variable_name(index)</code>的方式去访问其中的元素。集合数据类型包含以下几种：关联数据(associative array)、可变数组(Varray)、嵌套表(Nested table)。<br><a id="more"></a></p>
+<h3 id="Associative-array"><a href="#Associative-array" class="headerlink" title="Associative array"></a>Associative array</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关联数组有点类似于java中的Map，只是在PL/SQL中，关联数组索引的数据类型只能是string类型(VARCHAR2,VARCHAR,STRING,LONG)和PLS_INTEGER。关联数组不存在为<code>NULL</code>的情况，所以你不能使用<code>IS NULL</code>和<code>IS NOT NULL</code>去测试它，否则无法通过编译。<br>定义关联数组的方式如下：</p>
+<blockquote>
+<p>TYPE 关联数组类型名称 IS TABLE OF 值类型 INDEX BY 索引类型;</p>
+</blockquote>
+<p>来看下面的例子：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">DECLARE</span></div><div class="line">  <span class="keyword">TYPE</span> visits <span class="keyword">IS</span> <span class="keyword">TABLE</span> <span class="keyword">OF</span> PLS_INTEGER <span class="keyword">INDEX</span> <span class="keyword">BY</span> VARCHAR2(<span class="number">20</span>);</div><div class="line">  outpatient_visits visits;</div><div class="line">  i_index VARCHAR2(20);</div><div class="line"><span class="keyword">BEGIN</span></div><div class="line">  </div><div class="line">  outpatient_visits(<span class="string">'medical'</span>) := <span class="number">200</span>;</div><div class="line">  outpatient_visits('surgical') := 120;</div><div class="line">  outpatient_visits('dermatological') := 67;</div><div class="line">  outpatient_visits('emergency'):=176;</div><div class="line">  </div><div class="line">  </div><div class="line">  i_index := outpatient_visits.FIRST; <span class="comment">-- Get first element of array</span></div><div class="line">  </div><div class="line">  WHILE i_index IS NOT NULL LOOP</div><div class="line">    DBMS_Output.PUT_LINE</div><div class="line">      ('outpatient visits of ' || i_index || ' is ' || outpatient_visits(i_index));</div><div class="line">    i_index := outpatient_visits.NEXT(i_index);  <span class="comment">-- Get next element of array</span></div><div class="line">  <span class="keyword">END</span> <span class="keyword">LOOP</span>;</div><div class="line">  </div><div class="line"><span class="keyword">END</span>;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>outpatient visits of dermatological is 67<br>outpatient visits of emergency is 176<br>outpatient visits of medical is 200<br>outpatient visits of surgical is 120</p>
+</blockquote>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;从输出可以看出关联数组存储的顺序和键值插入顺序无关，它依赖于键的排序，而键的排序规则由初始化参数<code>NLS_SORT</code>和<code>NLS_COMP</code>决定。<code>FIRST</code>获取第一个元素的索引，<code>NEXT(index)</code>获取index的下一个索引。</p>
+<h3 id="Varray"><a href="#Varray" class="headerlink" title="Varray"></a>Varray</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可变数组可以存储的元素个数为0到定义的最大元素个数。定义关联数组的方式如下：</p>
+<blockquote>
+<p>TYPE 可变数组类型名称 IS VARRAY(元素最大个数) OF 值类型;</p>
+</blockquote>
+<p>我们首先看个例子：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">DECLARE</span></div><div class="line">  <span class="keyword">TYPE</span> array_list <span class="keyword">IS</span> <span class="keyword">VARRAY</span>(<span class="number">10</span>) <span class="keyword">OF</span> VARCHAR2(<span class="number">20</span>);</div><div class="line">  team array_list := array_list('A','B','C',NULL,NULL,NULL);</div><div class="line"><span class="keyword">BEGIN</span></div><div class="line">  </div><div class="line">  team(<span class="number">4</span>) := <span class="string">'D'</span>;</div><div class="line">  DBMS_OUTPUT.put_line(team.COUNT);</div><div class="line">  FOR I IN 1..team.COUNT LOOP</div><div class="line">    EXIT WHEN team(i) IS NULL;</div><div class="line">    DBMS_OUTPUT.put_line(i||':'||team(i));</div><div class="line">  <span class="keyword">END</span> <span class="keyword">LOOP</span>;</div><div class="line">  </div><div class="line"><span class="keyword">END</span>;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>6<br>1:A<br>2:B<br>3:C<br>4:D</p>
+</blockquote>
+<p>我们虽然定义<code>array_list</code>的容量为10，但是在初始化team这个数组的时候，只初始化了6个元素，所以team的容量为6，如果你执行<code>team(7):=&#39;E&#39;;</code>那么将抛出异常。看上去数组有点像key为整数的关联数组，但是他们的差距还是很大的，后面会详细讨论。<br>数组一般适用于：1、知道最大元素的数量；2、对顺序访问的速度有要求。</p>
+<h3 id="Nested-Table"><a href="#Nested-Table" class="headerlink" title="Nested Table"></a>Nested Table</h3><p>对于嵌套表，可以将其理解为只有一个列的表。<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">DECLARE</span></div><div class="line"> <span class="keyword">TYPE</span> N_TABLE <span class="keyword">IS</span> <span class="keyword">TABLE</span> <span class="keyword">OF</span> VARCHAR2(<span class="number">20</span>);</div><div class="line"> TN N_TABLE := N_TABLE('A','B','C');</div><div class="line"><span class="keyword">BEGIN</span></div><div class="line">  TN.EXTEND();</div><div class="line">  TN(4) := 'D';</div><div class="line">  </div><div class="line">  FOR I IN TN.FIRST..TN.LAST LOOP</div><div class="line">    DBMS_OUTPUT.PUT_LINE(TN(I));</div><div class="line">  <span class="keyword">END</span> <span class="keyword">LOOP</span>;</div><div class="line"><span class="keyword">END</span>;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>A<br>B<br>C<br>D</p>
+</blockquote>
+<p><code>EXTEND()</code>方法在tn嵌套表的末尾追加了一个空元素。<br>嵌套表数据存储在一个单独的存储表中，它是一个系统生成的数据库表。访问嵌套表时，数据库将嵌套表与其存储表连接起来。这使得嵌套表适合查询和更新。<br>下面用一个oracle官方文档的例子介绍嵌套表的集合操作：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">DECLARE</span></div><div class="line">  <span class="keyword">TYPE</span> nested_typ <span class="keyword">IS</span> <span class="keyword">table</span> <span class="keyword">OF</span> <span class="built_in">NUMBER</span>;</div><div class="line"> </div><div class="line">  nt1    nested_typ := nested_typ(1,2,3);</div><div class="line">  nt2    nested_typ := nested_typ(3,2,1);</div><div class="line">  nt3    nested_typ := nested_typ(2,3,1,3);</div><div class="line">  nt4    nested_typ := nested_typ(1,2,4);</div><div class="line">  answer nested_typ;</div><div class="line"> </div><div class="line">  PROCEDURE print_nested_table (nt nested_typ) IS</div><div class="line">    output VARCHAR2(128);</div><div class="line">  <span class="keyword">BEGIN</span></div><div class="line">    <span class="keyword">IF</span> nt <span class="keyword">IS</span> <span class="literal">NULL</span> <span class="keyword">THEN</span></div><div class="line">      DBMS_OUTPUT.PUT_LINE(<span class="string">'Result: null set'</span>);</div><div class="line">    ELSIF nt.COUNT = 0 THEN</div><div class="line">      DBMS_OUTPUT.PUT_LINE('Result: empty <span class="keyword">set</span><span class="string">');</span></div><div class="line">    ELSE</div><div class="line">      FOR i IN nt.FIRST .. nt.LAST LOOP  -- For first to last element</div><div class="line">        output := output || nt(i) || ' <span class="string">';</span></div><div class="line">      END LOOP;</div><div class="line">      DBMS_OUTPUT.PUT_LINE('<span class="keyword">Result</span>: <span class="string">' || output);</span></div><div class="line">    END IF;</div><div class="line">  END print_nested_table;</div><div class="line"> </div><div class="line">BEGIN</div><div class="line">  answer := nt1 MULTISET UNION nt4;</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := nt1 MULTISET UNION nt3;</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := nt1 MULTISET UNION DISTINCT nt3;</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := nt2 MULTISET INTERSECT nt3;</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := nt2 MULTISET INTERSECT DISTINCT nt3;</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := SET(nt3);</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := nt3 MULTISET EXCEPT nt2;</div><div class="line">  print_nested_table(answer);</div><div class="line">  answer := nt3 MULTISET EXCEPT DISTINCT nt2;</div><div class="line">  print_nested_table(answer);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Result: 1 2 3 1 2 4<br>Result: 1 2 3 2 3 1 3<br>Result: 1 2 3<br>Result: 3 2 1<br>Result: 3 2 1<br>Result: 2 3 1<br>Result: 3<br>Result: empty set</p>
+</blockquote>
+<p>嵌套表还有很多高级的用途，可以查看oracle的官方文档。</p>
+<h3 id="内置的集合操作方法"><a href="#内置的集合操作方法" class="headerlink" title="内置的集合操作方法"></a>内置的集合操作方法</h3><p>在前面的例子中已经介绍了一些方法，下面简单介绍下集合中更多的操作</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">DELETE</td>
+<td style="text-align:center">PROCEDURE</td>
+<td style="text-align:left">删除元素。用法：1、DELETE,删除集合中的所有元素；2、DELETE(n)，删除索引为N的元素；3、DELETE(m,n)，删除索引从m到n的元素</td>
+</tr>
+<tr>
+<td style="text-align:center">TRIM</td>
+<td style="text-align:center">PROCEDURE</td>
+<td style="text-align:left">从数组或嵌套表的末尾删除元素。用法：1、TRIM，最后一个元素；2、TRIM(n)，删除最后n个元素</td>
+</tr>
+<tr>
+<td style="text-align:center">EXTEND</td>
+<td style="text-align:center">PROCEDURE</td>
+<td style="text-align:left">从数组或嵌套表的末尾增加元素。用法：1、EXTEND，在末尾增加一个空元素；2、EXTEND(n)，在末尾增加n个空元素；3、EXTEND(n,i)，在末尾增加n个索引为i的元素的拷贝。</td>
+</tr>
+<tr>
+<td style="text-align:center">EXISTS</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">如果数组或嵌套表中存在该元素则返回TRUE。用法：EXISTS(n)</td>
+</tr>
+<tr>
+<td style="text-align:center">FIRST</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">返回第一个元素的索引</td>
+</tr>
+<tr>
+<td style="text-align:center">LAST</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">返回最后一个元素的索引</td>
+</tr>
+<tr>
+<td style="text-align:center">COUNT</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">返回集合中元素的个数</td>
+</tr>
+<tr>
+<td style="text-align:center">LIMIT</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">返回collection的最大容量</td>
+</tr>
+<tr>
+<td style="text-align:center">PRIOR</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">返回指定索引的前一个索引</td>
+</tr>
+<tr>
+<td style="text-align:center">NEXT</td>
+<td style="text-align:center">FUNCTION</td>
+<td style="text-align:left">返回指定索引的下一个索引</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Associative-Array、Varray和Nested-Table的比较"><a href="#Associative-Array、Varray和Nested-Table的比较" class="headerlink" title="Associative Array、Varray和Nested Table的比较"></a>Associative Array、Varray和Nested Table的比较</h3><p>下表是三种类型的比较：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">元素数量</th>
+<th style="text-align:center">索引类型</th>
+<th style="text-align:center">稀疏？稠密？</th>
+<th style="text-align:center">未初始化的状态</th>
+<th style="text-align:center">定义位置</th>
+<th style="text-align:center">是否可成为属性数据类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">关联数组</td>
+<td style="text-align:center">无限制</td>
+<td style="text-align:center">String或PLS_INTEGER</td>
+<td style="text-align:center">未定</td>
+<td style="text-align:center">empty</td>
+<td style="text-align:center">PL/SQL块或包中</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">数组</td>
+<td style="text-align:center">需指定</td>
+<td style="text-align:center">INTEGER</td>
+<td style="text-align:center">始终稠密</td>
+<td style="text-align:center">null</td>
+<td style="text-align:center">PL/SQL块或包中或模式级别</td>
+<td style="text-align:center">定义在模式级别</td>
+</tr>
+<tr>
+<td style="text-align:center">嵌套表</td>
+<td style="text-align:center">无限制</td>
+<td style="text-align:center">INTEGER</td>
+<td style="text-align:center">最开始为稠密，随着删除修改可能变为稀疏</td>
+<td style="text-align:center">null</td>
+<td style="text-align:center">PL/SQL块或包中或模式级别</td>
+<td style="text-align:center">定义在模式级别</td>
+</tr>
+</tbody>
+</table>
+<p>关联数组只能在PL/SQL块或包中定义，而数组以及嵌套表可以在模式级别定义。所以，当你想在程序之间传递关联数组，那么这两个程序只能是在通一个包下的子程序，并将关联数组定义在pl/sql包的级别，数组以及嵌套表就没有这个限制。因为这个原因，关联数组也不能作为属性数据类型。<br>当需要对其中的元素进行快速的顺序访问时，数组时最优的选择，当需要对其中的元素进行更新、删除操作时，代价就相对较大了。嵌套表数据存储在一个单独的数据库系统自动生成的表中。访问嵌套表时，数据库将嵌套表与其存储表连接起来。这使得嵌套的表适合查询和更新。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ORACLE/" rel="tag"># ORACLE</a>
+          
+            <a href="/tags/PL-SQL/" rel="tag"># PL/SQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/01/PL-SQL数据类型关注点/" rel="next" title="PL/SQL数据类型关注点">
+                <i class="fa fa-chevron-left"></i> PL/SQL数据类型关注点
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Associative-array"><span class="nav-number">1.</span> <span class="nav-text">Associative array</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Varray"><span class="nav-number">2.</span> <span class="nav-text">Varray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nested-Table"><span class="nav-number">3.</span> <span class="nav-text">Nested Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内置的集合操作方法"><span class="nav-number">4.</span> <span class="nav-text">内置的集合操作方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Associative-Array、Varray和Nested-Table的比较"><span class="nav-number">5.</span> <span class="nav-text">Associative Array、Varray和Nested Table的比较</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
