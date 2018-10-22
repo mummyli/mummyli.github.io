@@ -1,0 +1,777 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="LINUX," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Linux系统命令非常之多，但是玩过Linux之后就会明白，我们只需要掌握常用的命令就可以了。常用命令的使用方式也不可能都记住，但是你只要知道这个命令，使用的时候查下man或commond -h看看用法就好了。">
+<meta name="keywords" content="LINUX">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我工作中的常用LINUX命令">
+<meta property="og:url" content="http://yoursite.com/2018/10/14/我工作中的常用LINUX命令/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="Linux系统命令非常之多，但是玩过Linux之后就会明白，我们只需要掌握常用的命令就可以了。常用命令的使用方式也不可能都记住，但是你只要知道这个命令，使用的时候查下man或commond -h看看用法就好了。">
+<meta property="og:updated_time" content="2018-10-22T14:17:41.187Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我工作中的常用LINUX命令">
+<meta name="twitter:description" content="Linux系统命令非常之多，但是玩过Linux之后就会明白，我们只需要掌握常用的命令就可以了。常用命令的使用方式也不可能都记住，但是你只要知道这个命令，使用的时候查下man或commond -h看看用法就好了。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/14/我工作中的常用LINUX命令/"/>
+
+
+
+
+
+  <title>我工作中的常用LINUX命令 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/14/我工作中的常用LINUX命令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">我工作中的常用LINUX命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-14T16:40:15+08:00">
+                2018-10-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LINUX/" itemprop="url" rel="index">
+                    <span itemprop="name">LINUX</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Linux系统命令非常之多，但是玩过Linux之后就会明白，我们只需要掌握常用的命令就可以了。常用命令的使用方式也不可能都记住，但是你只要知道这个命令，使用的时候查下man或<code>commond -h</code>看看用法就好了。<br><a id="more"></a></p>
+<h4 id="cd"><a href="#cd" class="headerlink" title="cd"></a>cd</h4><p>这时一个最基本的命令，我们平时基本上也只会用到<code>cd dir</code>，也可以跟一些option，但是基本上是用不到的，dir可以是绝对路径也可以是相对路径。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> /path/path2     <span class="comment"># 切换到目录/path/path2</span></div><div class="line"><span class="built_in">cd</span> ./path          <span class="comment"># 切换到当前目录下的path目录中，“.”表示当前目录  </span></div><div class="line"><span class="built_in">cd</span> ../path         <span class="comment"># 切换到上层目录中的path目录中，“..”表示上一层目录</span></div></pre></td></tr></table></figure></p>
+<h4 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h4><p>用来查看文件和目录，option很多，下面列下我在工作中经常用到的，其他的可以通过<code>man ls</code>来查看详细的说明。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="_">-l</span>:列出文件的属性、权限等详细信息。ls <span class="_">-l</span>有一个别名是ll</div><div class="line"><span class="_">-a</span>:列出所有文件，包括隐藏文件</div><div class="line">-h:将文件容量以较易读的方式（GB，kB等）列出来</div><div class="line">-R:递归列出</div><div class="line">-F:在每个文件名后附上一个字符以说明该文件的类型，“*”表示可执行的普通文件；“/”表示目录；“@”表示符号链接；“|”表示FIFOs；“=”表示套接字(sockets)。</div></pre></td></tr></table></figure></p>
+<h4 id="pwd"><a href="#pwd" class="headerlink" title="pwd"></a>pwd</h4><p>用于打印当前目录的绝对路径。</p>
+<h4 id="mkdir"><a href="#mkdir" class="headerlink" title="mkdir"></a>mkdir</h4><p>创建一个空文件夹，与之对应的<code>rmdir</code>用于删除空文件夹。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir [-mp] 目录名</div><div class="line"></div><div class="line">-m:配置文件权限。mkdir -m 777 <span class="built_in">test</span></div><div class="line">-p:递归创建目录。mkdir -p ./<span class="built_in">test</span>1/<span class="built_in">test</span>2，若<span class="built_in">test</span>1不存在,则会先创建<span class="built_in">test</span>1</div></pre></td></tr></table></figure></p>
+<h4 id="rm"><a href="#rm" class="headerlink" title="rm"></a>rm</h4><p>该命令用于删除文件或者目录。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="_">-f</span>:强制删除</div><div class="line">-i:交互模式，删除前会询问用户</div><div class="line">-r:递归删除</div></pre></td></tr></table></figure></p>
+<h4 id="mv"><a href="#mv" class="headerlink" title="mv"></a>mv</h4><p>用户移动文件或者目录，更改名字。有两种基本用法：</p>
+<blockquote>
+<p>mv [-fiu] source destination<br>mv [options] source1 source2 source3 … directory</p>
+</blockquote>
+<p>用法一中，destination可以是文件名，也可以是目录；用法二是将多个文件或目录移动到目标目录中，注意目标只能是一个目录。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="_">-f</span>:强制，若目标文件存在，不会询问，直接覆盖</div><div class="line">-i:若目标文件存在，则会询问是否覆盖</div><div class="line">-u:若目标文件已存在，且<span class="built_in">source</span>比较新时，则更新目标文件</div></pre></td></tr></table></figure></p>
+<h4 id="cp"><a href="#cp" class="headerlink" title="cp"></a>cp</h4><p>用于复制文件或者目录，也可以用于创建链接文件(windows下面的快捷方式)。同mv一样，也有两种用法：</p>
+<blockquote>
+<p>cp [-adfilprsu] source destination<br>cp [options] source1 source2 source3 … directory</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="_">-f</span>:强制</div><div class="line">-i:若目标文件存在，则会提示是否覆盖</div><div class="line">-p:连同文件属性一起复制</div><div class="line">-r:递归复制</div><div class="line"><span class="_">-s</span>:复制成符号链接文件</div><div class="line">-u:<span class="built_in">source</span>比destination新才复制</div></pre></td></tr></table></figure>
+<h4 id="scp"><a href="#scp" class="headerlink" title="scp"></a>scp</h4><p>用于在Linux之间复制文件或者目录。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">scp [-r] [-P port] file_source file_target</div><div class="line">-r:递归复制</div><div class="line">-P:指定数据传输用到的端口号</div></pre></td></tr></table></figure></p>
+<h4 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h4><p>用于字符串的查找，大多数情况下都是和管道函数一起使用。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">grep [-acinv] <span class="string">'查找字符串'</span> filename</div><div class="line"><span class="_">-a</span> ：将binary文件以text文件的方式查找数据</div><div class="line">-c ：计算找到‘查找字符串’的次数</div><div class="line">-i ：忽略大小写</div><div class="line">-v ：反向选择，即显示出没有‘查找字符串’内容的那一行</div><div class="line">与管道函数的使用如下：</div><div class="line">ps -ef|grep ora</div></pre></td></tr></table></figure></p>
+<h4 id="find"><a href="#find" class="headerlink" title="find"></a>find</h4><p>用来在指定目录下查找文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">find [path] [options] [action]</div><div class="line">常用参数：</div><div class="line">-name filename:查找文件名称为filename的文件。</div><div class="line">-cmin n : 在过去 n 分钟内被修改过</div><div class="line">-ctime n : 在过去n天内被修改过的文件</div><div class="line">-user name:文件所有者为name的文件</div><div class="line">-group name:文件所有组为name的文件</div><div class="line">-type <span class="built_in">type</span>:查找文件类型为<span class="built_in">type</span>的文件。<span class="built_in">type</span>的可能取值：一般文件（f)、设备文件（b、c）、目录（d）、连接文件（l）、socket（s）、FIFO管道文件（p）</div><div class="line"></div><div class="line">关于action的用法，比如我们要找到文件名以<span class="string">'ip6tables'</span>开头的文件，并列出这些文件的详细信息：</div><div class="line">find / -type f -name ip6tables* -exec ls <span class="_">-l</span> &#123;&#125; \;</div></pre></td></tr></table></figure></p>
+<h4 id="top"><a href="#top" class="headerlink" title="top"></a>top</h4><p>实时显示进程动态。</p>
+<blockquote>
+<p>top [-] [d delay] [i] [n]</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">d : 改变显示的更新速度</div><div class="line">i : 不显示任何闲置 (idle) 或无用 (zombie) 的行程</div><div class="line">n : 更新的次数，完成后将会退出 top</div><div class="line">b ：搭配 <span class="string">"n"</span> 参数一起使用，可以用来将 top 的结果输出到文件中</div><div class="line"></div><div class="line">更新显示5次的结果输入到名称为top.log的文件中</div><div class="line">top -n 5 -b &lt; top.log</div></pre></td></tr></table></figure>
+<h4 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h4><p>查看某个时间点的进程运行情况。主要参数如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">-A:显示所有的进程。（或者<span class="_">-e</span>）</div><div class="line"><span class="_">-a</span>:不与terminal有关的所有进程</div><div class="line">-u:有效用户的相关进程</div><div class="line">-x:一般与a参数一起使用，可列出较完整的信息,不以终端机来区分。</div><div class="line"><span class="_">-f</span>:显示UID,PPIP,C与STIME栏位</div><div class="line"></div><div class="line">一般比较常见的用法：</div><div class="line">ps -ef</div><div class="line">ps -aux</div></pre></td></tr></table></figure></p>
+<h4 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h4><p>kill可将指定的信息送至程序.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">kill</span> -sgl PID</div><div class="line">sgl的常用信号如下：</div><div class="line">1：SIGHUP，启动被暂停的进程</div><div class="line">2：SIGINT，中断一个程序的进行</div><div class="line">9：SIGKILL，强制中断一个进程的进行</div><div class="line">15：SIGTERM，以正常的结束进程方式来终止进程</div><div class="line">17：SIGSTOP，暂停一个进程的进行</div></pre></td></tr></table></figure></p>
+<h4 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h4><p>对文件进行打包，压缩，常见参数如下。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">-c ：新建打包文件</div><div class="line">-t ：查看打包文件的内容含有哪些文件</div><div class="line">-x ：解打包或解压缩的功能，可以搭配-C（大写）指定解压的目录</div><div class="line">-j ：通过bzip2的支持进行压缩/解压缩</div><div class="line">-z ：通过gzip的支持进行压缩/解压缩</div><div class="line">-v ：在压缩/解压缩过程中，将正在处理的文件名显示出来</div><div class="line"><span class="_">-f</span> filename ：filename为要处理的文件</div><div class="line">-C dir ：指定压缩/解压缩的目录dir</div></pre></td></tr></table></figure></p>
+<p>常用的三个固定写法：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">压缩：tar -zcvf filename.tar.bz2 文件或目录</div><div class="line">查询：tar -ztvf filename.tar.bz2</div><div class="line">解压：tar -zxvf filename.tar.bz2 -C 目录</div></pre></td></tr></table></figure></p>
+<h4 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h4><p>压缩文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">zip [options] 压缩后文件名 文件1 文件2 ....</div><div class="line">zip [options] 压缩后文件名 文件或者目录</div><div class="line"></div><div class="line">options常见的有以下几种：</div><div class="line"><span class="_">-d</span>:从压缩文件内删除指定的文件。</div><div class="line">-m:将文件压缩并加入压缩文件后，删除原始文件，即把文件移到压缩文件中。</div><div class="line">-r:递归处理</div></pre></td></tr></table></figure></p>
+<h4 id="unzip"><a href="#unzip" class="headerlink" title="unzip"></a>unzip</h4><p>解压缩zip文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">unzip [options] 文件.zip [<span class="_">-d</span> 目标目录]</div><div class="line"></div><div class="line">options常见的有以下几种：</div><div class="line"><span class="_">-f</span>:更新现有的文件。</div><div class="line">-n:解压缩时不要覆盖原有的文件。</div><div class="line">-o:不必先询问用户，unzip执行后覆盖原有文件。</div></pre></td></tr></table></figure></p>
+<h4 id="cat"><a href="#cat" class="headerlink" title="cat"></a>cat</h4><p>查看文本文件内容。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat filename</div></pre></td></tr></table></figure></p>
+<h4 id="more"><a href="#more" class="headerlink" title="more"></a>more</h4><p>以一页一页的方式查看文本，<space>键翻到下一页,<b>键往回显示一页。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">more [options] [-每次显示行数] [+开始行号] filename</div><div class="line"></div><div class="line">options:</div><div class="line">-p:翻页时先清除萤幕后再显示内容</div></pre></td></tr></table></figure></b></space></p>
+<h4 id="tail"><a href="#tail" class="headerlink" title="tail"></a>tail</h4><p>也是一个查看文件内容的命令，大多数时候搭配<code>-f</code>参数来查看正在改变的日志。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">tail [options] 文件名</div><div class="line"></div><div class="line">options：</div><div class="line"><span class="_">-f</span>:循环读取</div><div class="line">-q:不显示处理信息</div><div class="line">-n &lt;行数&gt;:显示行数</div><div class="line"><span class="_">-s</span>, --sleep-interval=S 与<span class="_">-f</span>合用,表示在每次反复的间隔休眠S秒</div></pre></td></tr></table></figure></p>
+<h4 id="groupadd"><a href="#groupadd" class="headerlink" title="groupadd"></a>groupadd</h4><p>将新的用户组加入系统<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">groupadd [-g gid] groupname</div><div class="line"></div><div class="line">-g gid:指定组的ID号</div></pre></td></tr></table></figure></p>
+<h4 id="useradd"><a href="#useradd" class="headerlink" title="useradd"></a>useradd</h4><p>创建系统用户。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">useradd [<span class="_">-d</span> 用户主目录] [<span class="_">-e</span> 有效期] [<span class="_">-f</span> 缓冲天数] [-g 主要群主] [-G 次要群主] [-u uid] 用户名</div><div class="line"></div><div class="line">有效期:账号的有效期限</div><div class="line">缓冲天数：指密码过期后多少天之后关闭账号</div></pre></td></tr></table></figure></p>
+<h4 id="chown"><a href="#chown" class="headerlink" title="chown"></a>chown</h4><p>指定文件的拥有者改为指定的用户或组<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">chown [-R] user[:group] file1 file2...</div><div class="line"></div><div class="line">-R:递归处理子目录或文件</div></pre></td></tr></table></figure></p>
+<h4 id="chmod"><a href="#chmod" class="headerlink" title="chmod"></a>chmod</h4><p>修改文件的访问权限。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">chmod [-R] mode file1 file2...</div><div class="line"></div><div class="line">-R:递归处理子目录或文件</div><div class="line"></div><div class="line">说说mode：</div><div class="line">1、先说比较直观的写法：</div><div class="line">[ugoa][+-=][rwx]</div><div class="line">u表示文件所有者，g表示文件所属组，o表示其他用户，a表示前三者</div><div class="line">+增加权限，-取消权限，=修改权限为。</div><div class="line">r表示读取，w表示写，x表示执行权限</div><div class="line">示例：chmod u+rwx,g+rx,o=r file1</div><div class="line"></div><div class="line">2、平时工作用得比较多的就是数字表示，写起来比较简单，但是没有那么直观。</div><div class="line">以三个数字表示，分别表示所属用户的权限、所属组的权限、其他用户权限。</div><div class="line">r=4,w=2,x=1</div><div class="line">示例：修改file1，user具有rwx，group和others具有r权限。chmod 744 file1</div></pre></td></tr></table></figure></p>
+<h4 id="df"><a href="#df" class="headerlink" title="df"></a>df</h4><p>用于查看文件系统磁盘使用情况。基本上也就用到<code>df -h</code>。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">df [options] [file]</div><div class="line"></div><div class="line">说明：</div><div class="line">file:查看指定文件夹或文件的使用情况，emmmm...没用到过这个。</div><div class="line"><span class="_">-a</span>:查看所有文件系统，默认。</div><div class="line">-h:以可读格式显示。</div><div class="line">-t, --type=TYPE:显示指定文件系统的TYPE的内容</div><div class="line">-x, --exclude-type=TYPE:排除指定文件系统的TYPE的内容</div></pre></td></tr></table></figure></p>
+<h4 id="du"><a href="#du" class="headerlink" title="du"></a>du</h4><p>显示目录或文件的大小<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">du [-chms] [--exclude=&lt;目录或文件&gt;] 目录或文件</div><div class="line"></div><div class="line">-c:显示文件总数</div><div class="line">-h:以可读方式显示。</div><div class="line">-m:以M为单位显示文件大小。</div><div class="line"><span class="_">-s</span>:只显示总计</div></pre></td></tr></table></figure></p>
+<h4 id="rpm"><a href="#rpm" class="headerlink" title="rpm"></a>rpm</h4><p>Red Hat Linux发行版专门用来管理Linux各项套件的程序。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">rpm [-afqlihve] rpm包名 [--force] [--nodeps]</div><div class="line"></div><div class="line"><span class="_">-a</span>:查询所有已经安装的软件包</div><div class="line"><span class="_">-f</span>:查询文件所属软件包</div><div class="line">-q:查询软件包</div><div class="line"><span class="_">-l</span>:显示软件包的文件列表</div><div class="line">-i:安装软件包</div><div class="line">-h:显示安装进度</div><div class="line">-v:提供详细的输出</div><div class="line"><span class="_">-e</span>:卸载rpm包</div><div class="line">--force:强制安装</div><div class="line">--nodeps:不验证依赖</div></pre></td></tr></table></figure></p>
+<h4 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h4><p>用来定期执行程序的命令。<br>如果是系统的定时任务，直接编辑/etc/crontab即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">crontab [-u uername] [-ler]</div><div class="line"></div><div class="line">-u:只能root执行，帮其他用户创建或删除定时调度作业。</div><div class="line"><span class="_">-l</span>:查看crontab工作列表</div><div class="line"><span class="_">-e</span>:编辑crontab工作内容</div><div class="line">-r:删除所有作业</div><div class="line"></div><div class="line">内容的基本格式如下:</div><div class="line">分钟(0~59) 小时(0~23) 日期(1~31) 月份(1~12) 周(0~7) /xxx/xxx/xxx.sh</div><div class="line"></div><div class="line">特殊字符：</div><div class="line">*:表示任何时候都可以。例如0 12 * * *，表示每天的12点执行</div><div class="line">,:和。例如0 12,13 * * *，表示每天的12点和13点执行</div><div class="line">-:表示时间范围。例如10 5-8 * * *，表示每天5点到8点的10份都执行一次。</div><div class="line">/n:没隔n执行一次。例如*/30 * * *,表示每30分钟执行一次</div></pre></td></tr></table></figure></p>
+<h4 id="fdisk"><a href="#fdisk" class="headerlink" title="fdisk"></a>fdisk</h4><p>用于进行磁盘管理，分区操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">fdisk [<span class="_">-l</span>] [设备名称]</div><div class="line"></div><div class="line"><span class="_">-l</span>：列出所有分区内容</div><div class="line"></div><div class="line">直接输入fdisk 设备名称   就可以对磁盘进行分区管理。</div><div class="line">[root@master ~]<span class="comment"># fdisk /dev/sda</span></div><div class="line">欢迎使用 fdisk (util-linux 2.23.2)。</div><div class="line"></div><div class="line">更改将停留在内存中，直到您决定将更改写入磁盘。</div><div class="line">使用写入命令前请三思。</div><div class="line"></div><div class="line"></div><div class="line">命令(输入 m 获取帮助)：m</div><div class="line">命令操作</div><div class="line">   a   toggle a bootable flag</div><div class="line">   b   edit bsd disklabel</div><div class="line">   c   toggle the dos compatibility flag</div><div class="line">   d   delete a partition</div><div class="line">   g   create a new empty GPT partition table</div><div class="line">   G   create an IRIX (SGI) partition table</div><div class="line">   l   list known partition types</div><div class="line">   m   <span class="built_in">print</span> this menu</div><div class="line">   n   add a new partition</div><div class="line">   o   create a new empty DOS partition table</div><div class="line">   p   <span class="built_in">print</span> the partition table</div><div class="line">   q   quit without saving changes</div><div class="line">   s   create a new empty Sun disklabel</div><div class="line">   t   change a partition<span class="string">'s system id</span></div><div class="line">   u   change display/entry units</div><div class="line">   v   verify the partition table</div><div class="line">   w   write table to disk and exit</div><div class="line">   x   extra functionality (experts only)</div></pre></td></tr></table></figure></p>
+<h4 id="shutdown"><a href="#shutdown" class="headerlink" title="shutdown"></a>shutdown</h4><p>用来进行关机相关的操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">shutdown [options] [关机时间] [msg]</div><div class="line"></div><div class="line">options:</div><div class="line">-t seconds:设定几秒之后关机；</div><div class="line">-k:搭配msg使用，并不真的关机，只将消息传递给使用者。</div><div class="line">-r:关机后重启</div><div class="line">-n:强制关机。</div><div class="line">-c:取消目前正在进行的关机动作</div></pre></td></tr></table></figure></p>
+<h4 id="reboot"><a href="#reboot" class="headerlink" title="reboot"></a>reboot</h4><p>重启命令</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/LINUX/" rel="tag"># LINUX</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/06/PL-SQL数据类型——COLLECTION/" rel="next" title="PL/SQL数据类型——COLLECTION">
+                <i class="fa fa-chevron-left"></i> PL/SQL数据类型——COLLECTION
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#cd"><span class="nav-number">1.</span> <span class="nav-text">cd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ls"><span class="nav-number">2.</span> <span class="nav-text">ls</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pwd"><span class="nav-number">3.</span> <span class="nav-text">pwd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mkdir"><span class="nav-number">4.</span> <span class="nav-text">mkdir</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rm"><span class="nav-number">5.</span> <span class="nav-text">rm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mv"><span class="nav-number">6.</span> <span class="nav-text">mv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cp"><span class="nav-number">7.</span> <span class="nav-text">cp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scp"><span class="nav-number">8.</span> <span class="nav-text">scp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#grep"><span class="nav-number">9.</span> <span class="nav-text">grep</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#find"><span class="nav-number">10.</span> <span class="nav-text">find</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#top"><span class="nav-number">11.</span> <span class="nav-text">top</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ps"><span class="nav-number">12.</span> <span class="nav-text">ps</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kill"><span class="nav-number">13.</span> <span class="nav-text">kill</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tar"><span class="nav-number">14.</span> <span class="nav-text">tar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zip"><span class="nav-number">15.</span> <span class="nav-text">zip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unzip"><span class="nav-number">16.</span> <span class="nav-text">unzip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cat"><span class="nav-number">17.</span> <span class="nav-text">cat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#more"><span class="nav-number">18.</span> <span class="nav-text">more</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tail"><span class="nav-number">19.</span> <span class="nav-text">tail</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groupadd"><span class="nav-number">20.</span> <span class="nav-text">groupadd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#useradd"><span class="nav-number">21.</span> <span class="nav-text">useradd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chown"><span class="nav-number">22.</span> <span class="nav-text">chown</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#chmod"><span class="nav-number">23.</span> <span class="nav-text">chmod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#df"><span class="nav-number">24.</span> <span class="nav-text">df</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#du"><span class="nav-number">25.</span> <span class="nav-text">du</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rpm"><span class="nav-number">26.</span> <span class="nav-text">rpm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#crontab"><span class="nav-number">27.</span> <span class="nav-text">crontab</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fdisk"><span class="nav-number">28.</span> <span class="nav-text">fdisk</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shutdown"><span class="nav-number">29.</span> <span class="nav-text">shutdown</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reboot"><span class="nav-number">30.</span> <span class="nav-text">reboot</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2143185"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
