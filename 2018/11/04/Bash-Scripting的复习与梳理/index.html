@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="ORACLE,PL/SQL," />
+  <meta name="keywords" content="LINUX," />
 
 
 
@@ -93,17 +93,19 @@
 
 
 
-<meta name="description" content="数据类型决定了它的存储格式、有效值范围以及可以对它进行的操作。本文主要记录一些PL/SQL中标量数据类型需要注意的一些点。首先简单解释下什么是标量数据类型，当第一次在ORACLE官方文档中看到这个词的时候也是有点懵的。ORACLE对其的解释是store values with no internal components，意思是标量数据类型只有一个值，没有内部分量，比如VARCHAR2、BOOLE">
-<meta name="keywords" content="ORACLE,PL&#x2F;SQL">
+<meta name="description" content="最近把Linux Bash编程的知识复习了一遍，大概梳理了一下，做个记录。">
+<meta name="keywords" content="LINUX">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PL&#x2F;SQL数据类型关注点">
-<meta property="og:url" content="http://yoursite.com/2018/04/01/PL-SQL数据类型关注点/index.html">
+<meta property="og:title" content="Bash-Scripting的复习与梳理">
+<meta property="og:url" content="http://yoursite.com/2018/11/04/Bash-Scripting的复习与梳理/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="数据类型决定了它的存储格式、有效值范围以及可以对它进行的操作。本文主要记录一些PL/SQL中标量数据类型需要注意的一些点。首先简单解释下什么是标量数据类型，当第一次在ORACLE官方文档中看到这个词的时候也是有点懵的。ORACLE对其的解释是store values with no internal components，意思是标量数据类型只有一个值，没有内部分量，比如VARCHAR2、BOOLE">
-<meta property="og:updated_time" content="2018-04-01T09:26:27.934Z">
+<meta property="og:description" content="最近把Linux Bash编程的知识复习了一遍，大概梳理了一下，做个记录。">
+<meta property="og:image" content="http://yoursite.com/2018/11/04/Bash-Scripting的复习与梳理/Linux_bash.png">
+<meta property="og:updated_time" content="2018-11-10T02:04:51.382Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PL&#x2F;SQL数据类型关注点">
-<meta name="twitter:description" content="数据类型决定了它的存储格式、有效值范围以及可以对它进行的操作。本文主要记录一些PL/SQL中标量数据类型需要注意的一些点。首先简单解释下什么是标量数据类型，当第一次在ORACLE官方文档中看到这个词的时候也是有点懵的。ORACLE对其的解释是store values with no internal components，意思是标量数据类型只有一个值，没有内部分量，比如VARCHAR2、BOOLE">
+<meta name="twitter:title" content="Bash-Scripting的复习与梳理">
+<meta name="twitter:description" content="最近把Linux Bash编程的知识复习了一遍，大概梳理了一下，做个记录。">
+<meta name="twitter:image" content="http://yoursite.com/2018/11/04/Bash-Scripting的复习与梳理/Linux_bash.png">
 
 
 
@@ -131,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/04/01/PL-SQL数据类型关注点/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/11/04/Bash-Scripting的复习与梳理/"/>
 
 
 
 
 
-  <title>PL/SQL数据类型关注点 | 木乃伊、</title>
+  <title>Bash-Scripting的复习与梳理 | 木乃伊、</title>
   
 
 
@@ -276,7 +278,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/01/PL-SQL数据类型关注点/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/04/Bash-Scripting的复习与梳理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="L4J">
@@ -293,7 +295,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">PL/SQL数据类型关注点</h1>
+          <h1 class="post-title" itemprop="name headline">Bash-Scripting的复习与梳理</h1>
         
 
         <div class="post-meta">
@@ -305,8 +307,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-01T15:55:44+08:00">
-                2018-04-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-04T16:49:31+08:00">
+                2018-11-04
               </time>
             
 
@@ -328,8 +330,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
-                    <span itemprop="name">ORACLE</span>
+                  <a href="/categories/LINUX/" itemprop="url" rel="index">
+                    <span itemprop="name">LINUX</span>
                   </a>
                 </span>
 
@@ -367,40 +369,25 @@
       
 
       
-        <p>数据类型决定了它的存储格式、有效值范围以及可以对它进行的操作。本文主要记录一些PL/SQL中标量数据类型需要注意的一些点。<br>首先简单解释下什么是标量数据类型，当第一次在ORACLE官方文档中看到这个词的时候也是有点懵的。ORACLE对其的解释是<code>store values with no internal components</code>，意思是标量数据类型只有一个值，没有内部分量，比如VARCHAR2、BOOLEAN、NUMBER等。与其相对的就是属性数据类型，比较常见的就是在PL/SQL中定义一个变量为数据库中的一行。<br><a id="more"></a><br>下面看看PL/SQL中定义的标量数据类型都有哪些：</p>
+        <img src="/2018/11/04/Bash-Scripting的复习与梳理/Linux_bash.png" alt="Linux_bash.png" title="">
+<p>最近把Linux Bash编程的知识复习了一遍，大概梳理了一下，做个记录。<br><a id="more"></a></p>
+<h4 id="第一个Bash-Script"><a href="#第一个Bash-Script" class="headerlink" title="第一个Bash-Script"></a>第一个Bash-Script</h4><p>LINUX shell的种类非常之多，但是目前用得最为广泛的还是Bash，本文也是基于Bash的Shell环境。<br>下面是一个简单的示例:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#! /bin/sh</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">'hello world!'</span></div></pre></td></tr></table></figure></p>
+<p>这就是一个最简单的shell脚本了。<br>第一行的<code>#!</code>用来告诉系统，这个脚本用什么解释器来执行（说明:sh和bash本身是不同的Shell，但是在我目前用得CentOS7版本sh和bash是等价的，sh是一个指向bash的符号链接）。<br><code>echo</code>命令输出文本到屏幕</p>
+<h4 id="如何运行脚本"><a href="#如何运行脚本" class="headerlink" title="如何运行脚本"></a>如何运行脚本</h4><p>一种方式就是讲脚本作为解释器的参数，如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sh test.sh</div></pre></td></tr></table></figure></p>
+<p>第二种方式就是授予文件可执行权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">chmod +x test.sh</div><div class="line">或者</div><div class="line">chmod 755 test.sh</div><div class="line"></div><div class="line">执行脚本</div><div class="line">./test.sh</div></pre></td></tr></table></figure></p>
+<h4 id="变量与参数"><a href="#变量与参数" class="headerlink" title="变量与参数"></a>变量与参数</h4><h5 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h5><p>Bash是一种弱类型的语言，你只需要直接定义<code>变量名=value</code>即可。当需要引用这个变量的时候使用<code>$var_name</code>或者<code>${var_name}</code>即可。<br><code>$var_name</code>是<code>${var_name}</code>的一种简写形式，但是在某些情况下只能使用<code>${var_name}</code>，例如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 当需要连接两个变量</span></div><div class="line">your_id=<span class="variable">$&#123;USER&#125;</span>-on-<span class="variable">$&#123;HOSTNAME&#125;</span></div><div class="line"></div><div class="line"><span class="comment"># 或者会与其他字符串写在一起的时候</span></div><div class="line"><span class="built_in">echo</span> <span class="string">'$&#123;num&#125;instance running!'</span></div></pre></td></tr></table></figure></p>
+<p>所以建议在写shell的时候统一使用<code>${var_name}</code>的风格。<br>bash中变量是弱类型的，那么不管你传给他的是字符串、数字或者数组他都统统会接收，有时候这就会导致一些问题，比如你想做个计算器，这时候传给了变量一个’ABCDEFG’，那么这时候我们就想这个变量只能接收数字。又或者你想定义一个常量，不想用户修改。那么以上这些我们可以使用<code>declare</code>来声明变量的一些属性。<br>declare常用参数如下：</p>
 <blockquote>
-<ul>
-<li>SQL中的所有数据类型</li>
-<li>BOOLEAN</li>
-<li>PLS_INTEGER</li>
-<li>BINARY_INTEGER</li>
-<li>REF CURSOR</li>
-<li>用户定义的子类型</li>
-</ul>
+<p>-r 定义一个只读变量，也可以使用”readonly var_name”将变量定义为只读变量<br>-i 定义变量类型为整型<br>-a 定义变量类型为数组<br>-f 定义一个函数<br>-x 定义一个全局变量</p>
 </blockquote>
-<h3 id="CHAR和VARCHAR2"><a href="#CHAR和VARCHAR2" class="headerlink" title="CHAR和VARCHAR2"></a>CHAR和VARCHAR2</h3><p>CHAR数据类型会用空格对接收到的字符补齐到它定义的最大长度，VARCHAR2不会。即CHAR是定长的，而varchar2是可变长度的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">DECLARE</div><div class="line">  p_char  CHAR(10 CHAR);</div><div class="line">  p_varchar2   VARCHAR2(10 CHAR);</div><div class="line">BEGIN</div><div class="line">  p_char := &apos;char&apos;;</div><div class="line">  p_varchar2  := &apos;varchar2&apos;;</div><div class="line"> </div><div class="line">  DBMS_OUTPUT.PUT_LINE(&apos;*&apos; || p_char || &apos;*&apos;);</div><div class="line">  DBMS_OUTPUT.PUT_LINE(&apos;*&apos; || p_varchar2 || &apos;*&apos;);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
-<p>输出如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">*char      *</div><div class="line">*varchar2*</div></pre></td></tr></table></figure></p>
-<p>在SQL数据类型中还有一个用于保存字符的数据类型——VARCHAR，在目前的版本中，它VARCHAR2完全一样的。在未来的发布版本中有可能会将其独立为单独的数据类型，以兼容新的数据SQL标准。</p>
-<h3 id="用PLS-INTEGER取代NUMBER"><a href="#用PLS-INTEGER取代NUMBER" class="headerlink" title="用PLS_INTEGER取代NUMBER"></a>用PLS_INTEGER取代NUMBER</h3><p>当需要进行大量的数据计算的时候建议使用PLS_INTEGER来取代NUMBER数据类型。它相比NUMBER具有以下优势：</p>
-<ul>
-<li>需要更少的存储空间</li>
-<li>对PLS_INTEGER的计算是直接基于硬件的，而NUMBER是通过库函数来完成的。</li>
-</ul>
-<p>但是需要注意的是PLS_INTEGER的计算范围在-2,147,483,648到2,147,483,647之间。在此范围之外的计算就只能使用NUMBER或者他的子类型INTEGER。<br>PLS_INTEGR还有一个子类型——SIMPLE_INTEGER,它相比PLS_INTEGER加了<code>NOT NULL</code>的约束，以及对范围溢出的计算作了不同的处理。<br>当所有的操作数都为SIMPLE_INTEGER时，对溢出的计算操作会进行二补数计算。</p>
+<p>当想删除一个变量的时候直接使用<code>unset var_name</code>即可，注意这个命令不能删除只读变量。</p>
+<h5 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h5><p>那么如何向一个脚本传递参数呢？<br>当我们想向一个脚本传递参数的时候，直接在执行脚本的命令后面跟参数即可：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sh ./test.sh parm1 parm2 parm3</div></pre></td></tr></table></figure></p>
+<p>在脚本中使用<code>$n</code>(n是一个数字，如：$1获取第一个参数)即可。下面是可能经常用到的参数变量：</p>
 <blockquote>
-<p>二补数（2’s complement）是一种用二进制表示有号数的方法，也是一种将数字的正负号变号的方式，常在计算机科学中使用。在中国大陆地区通常称作补码。 一个数字的二补数就是将该数字作位反相计算（即一补数），再将结果加 1，即为该数字的二补数。在二补数系统中，一个负数就是用其对应正数的二补数来表示。</p>
+<p>$0  当前脚本的文件名。<br>$n  传递给脚本或函数的参数。n是一个数字。例如，第一个参数是 $1 。<br>$#  传递给脚本或函数的参数个数。<br>$<em>  传递给脚本或函数的所有参数。<br>$@  传递给脚本或函数的所有参数。被双引号 (“ “)包含时与$</em>不同。<br>$?  上个命令的退出状态，或函数的返回值。<br>$_  上一个命令的最后一个参数</p>
 </blockquote>
-<p>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">DECLARE</div><div class="line">  n SIMPLE_INTEGER := 2147483645;</div><div class="line">BEGIN</div><div class="line">  FOR j IN 1..4 LOOP</div><div class="line">    n := n + 1;</div><div class="line">    DBMS_OUTPUT.PUT_LINE(TO_CHAR(n, &apos;S9999999999&apos;));</div><div class="line">  END LOOP;</div><div class="line">  FOR j IN 1..4 LOOP</div><div class="line">   n := n - 1;</div><div class="line">   DBMS_OUTPUT.PUT_LINE(TO_CHAR(n, &apos;S9999999999&apos;));</div><div class="line">  END LOOP;</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
-<p>结果如下</p>
-<blockquote>
-<p>+2147483646<br>+2147483647<br>-2147483648<br>-2147483647<br>-2147483648<br>+2147483647<br>+2147483646<br>+2147483645</p>
-<p>PL/SQL procedure successfully completed.</p>
-</blockquote>
-<p>下面简单讲下这个过程，我们将范围限制在-8~7之间。</p>
-<blockquote>
-<p>7+1的过程如下：<br>结果为8，溢出了，这时候对其进行二补码运算<br>8对应的二进制为：0000 1000<br>取反：1111 0111<br>+1:1111 1000<br>转换成十进制为-8</p>
-</blockquote>
-
+<p>我们经常用到的Linux命令中有一种叫option的东西，基本模式<code>-optionname</code>或者<code>--longoptionname</code>。如果在我们编写脚本的时候需要option的话，简单的脚本直接把他当普通参数手工处理即可，面对比较复杂的可以使用<a href="http://tldp.org/LDP/abs/html/extmisc.html#GETOPTY" target="_blank" rel="external">getopt</a>或者<a href="http://tldp.org/LDP/abs/html/internal.html#GETOPTSX" target="_blank" rel="external">getopt</a>。</p>
+<h4 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h4><h4 id="关于引号"><a href="#关于引号" class="headerlink" title="关于引号"></a>关于引号</h4><h4 id="while与for"><a href="#while与for" class="headerlink" title="while与for"></a>while与for</h4><h4 id="算术运算"><a href="#算术运算" class="headerlink" title="算术运算"></a>算术运算</h4><h4 id="逻辑运算"><a href="#逻辑运算" class="headerlink" title="逻辑运算"></a>逻辑运算</h4><h4 id="if-amp-case"><a href="#if-amp-case" class="headerlink" title="if &amp; case"></a>if &amp; case</h4><h4 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h4><h4 id="读取键盘的输入"><a href="#读取键盘的输入" class="headerlink" title="读取键盘的输入"></a>读取键盘的输入</h4><h4 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h4><h4 id="优雅的退出"><a href="#优雅的退出" class="headerlink" title="优雅的退出"></a>优雅的退出</h4><h4 id="Debug-your-Script"><a href="#Debug-your-Script" class="headerlink" title="Debug your Script"></a>Debug your Script</h4>
       
     </div>
 
@@ -429,9 +416,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/ORACLE/" rel="tag"># ORACLE</a>
-          
-            <a href="/tags/PL-SQL/" rel="tag"># PL/SQL</a>
+            <a href="/tags/LINUX/" rel="tag"># LINUX</a>
           
         </div>
       
@@ -444,8 +429,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/30/聊聊PL-SQL条件编译/" rel="next" title="聊聊PL/SQL条件编译">
-                <i class="fa fa-chevron-left"></i> 聊聊PL/SQL条件编译
+              <a href="/2018/10/14/我工作中的常用LINUX命令/" rel="next" title="我工作中的常用LINUX命令">
+                <i class="fa fa-chevron-left"></i> 我工作中的常用LINUX命令
               </a>
             
           </div>
@@ -453,10 +438,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/04/06/PL-SQL数据类型——COLLECTION/" rel="prev" title="PL/SQL数据类型——COLLECTION">
-                PL/SQL数据类型——COLLECTION <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -587,7 +568,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#CHAR和VARCHAR2"><span class="nav-number">1.</span> <span class="nav-text">CHAR和VARCHAR2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用PLS-INTEGER取代NUMBER"><span class="nav-number">2.</span> <span class="nav-text">用PLS_INTEGER取代NUMBER</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一个Bash-Script"><span class="nav-number">1.</span> <span class="nav-text">第一个Bash-Script</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何运行脚本"><span class="nav-number">2.</span> <span class="nav-text">如何运行脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#变量与参数"><span class="nav-number">3.</span> <span class="nav-text">变量与参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#变量"><span class="nav-number">3.1.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参数"><span class="nav-number">3.2.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数组"><span class="nav-number">4.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于引号"><span class="nav-number">5.</span> <span class="nav-text">关于引号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#while与for"><span class="nav-number">6.</span> <span class="nav-text">while与for</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#算术运算"><span class="nav-number">7.</span> <span class="nav-text">算术运算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑运算"><span class="nav-number">8.</span> <span class="nav-text">逻辑运算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#if-amp-case"><span class="nav-number">9.</span> <span class="nav-text">if & case</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数"><span class="nav-number">10.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取键盘的输入"><span class="nav-number">11.</span> <span class="nav-text">读取键盘的输入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串"><span class="nav-number">12.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优雅的退出"><span class="nav-number">13.</span> <span class="nav-text">优雅的退出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Debug-your-Script"><span class="nav-number">14.</span> <span class="nav-text">Debug your Script</span></a></li></ol></div>
             
 
           </div>
