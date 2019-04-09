@@ -1,0 +1,767 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ORACLE," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;获取SQL执行计划的方式有很多，但是某些时候获取的SQL执行计划并不是准确的，只有在SQL真实执行之后获取到的SQL PLAN才是真实准确的，其他方式(如，explain plan)获取到的执行计划都有可能因为绑定绑定变量和当时SQL执行环境的影响而导致获取到的执行计划可能不准确。对于AUTOTRACE开关，当执行SET AUTOT ON和SET AUTOT TRACE命令此时的SQL">
+<meta name="keywords" content="ORACLE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过10046 event来获取真实的执行计划">
+<meta property="og:url" content="http://yoursite.com/2019/04/09/10046-event-and-sql-plan/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="&amp;emsp;获取SQL执行计划的方式有很多，但是某些时候获取的SQL执行计划并不是准确的，只有在SQL真实执行之后获取到的SQL PLAN才是真实准确的，其他方式(如，explain plan)获取到的执行计划都有可能因为绑定绑定变量和当时SQL执行环境的影响而导致获取到的执行计划可能不准确。对于AUTOTRACE开关，当执行SET AUTOT ON和SET AUTOT TRACE命令此时的SQL">
+<meta property="og:updated_time" content="2019-04-09T03:02:49.185Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过10046 event来获取真实的执行计划">
+<meta name="twitter:description" content="&amp;emsp;获取SQL执行计划的方式有很多，但是某些时候获取的SQL执行计划并不是准确的，只有在SQL真实执行之后获取到的SQL PLAN才是真实准确的，其他方式(如，explain plan)获取到的执行计划都有可能因为绑定绑定变量和当时SQL执行环境的影响而导致获取到的执行计划可能不准确。对于AUTOTRACE开关，当执行SET AUTOT ON和SET AUTOT TRACE命令此时的SQL">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/09/10046-event-and-sql-plan/"/>
+
+
+
+
+
+  <title>通过10046 event来获取真实的执行计划 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/09/10046-event-and-sql-plan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">通过10046 event来获取真实的执行计划</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-09T08:24:57+08:00">
+                2019-04-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;获取SQL执行计划的方式有很多，但是某些时候获取的SQL执行计划并不是准确的，只有在SQL真实执行之后获取到的SQL PLAN才是真实准确的，其他方式(如，explain plan)获取到的执行计划都有可能因为绑定绑定变量和当时SQL执行环境的影响而导致获取到的执行计划可能不准确。对于AUTOTRACE开关，当执行<code>SET AUTOT ON</code>和<code>SET AUTOT TRACE</code>命令此时的SQL是实际执行过的，所以此时获取到的执行计划是准确的。而<code>SET AUTOT TRACE EXP</code>命令时稍有不同，当执行的是SELECT语句时SQL语句并不会实际执行，此时获取到的执行计划和直接使用<code>explain plan</code>命令获取的结果是一致的，但是对于DML命令则会实际执行该SQL。<br><a id="more"></a><br>&emsp;下面看一个例子，说明<code>SET AUTOT TRACE EXP</code>并不会真实的执行SELECT语句，以此为例来介绍如何确定SQL是否真实执行。<br>&emsp;首先，我们直接执行SQL，可以在<code>V$SQLAREA</code>里看到EXECUTIONS的值为1。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT PCT_USED,PCT_FREE FROM TEST_ENV.TB_TABLE_LIST WHERE TABLE_NAME=<span class="string">'DBMS_SQLPATCH_STATE'</span>;</div><div class="line"></div><div class="line">  PCT_USED   PCT_FREE</div><div class="line">---------- ----------</div><div class="line">        40         10</div><div class="line"></div><div class="line">SQL&gt; SELECT EXECUTIONS FROM V<span class="variable">$SQLAREA</span> WHERE SQL_TEXT LIKE <span class="string">'SELECT PCT_USED,PCT_FREE FROM TEST_%'</span>;</div><div class="line"></div><div class="line">EXECUTIONS</div><div class="line">----------</div><div class="line">         1</div><div class="line"></div><div class="line">SQL&gt; ALTER SYSTEM FLUSH SHARED_POOL;--该操作为了方便后面查询，生产环境勿执行</div><div class="line"></div><div class="line">系统已更改。</div></pre></td></tr></table></figure></p>
+<p>&emsp;打开<code>SET AUTOT TRACE EXP</code>，后重复上述SQL，可以看到EXECUTIONS的值为0，表明SQL并没有真实执行。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SET AUTOT TRACE EXP</div><div class="line">SQL&gt; SELECT PCT_USED,PCT_FREE FROM TEST_ENV.TB_TABLE_LIST WHERE TABLE_NAME=<span class="string">'DBMS_SQLPATCH_STATE'</span>;</div><div class="line"></div><div class="line">执行计划</div><div class="line">----------------------------------------------------------</div><div class="line">Plan <span class="built_in">hash</span> value: 3473397811</div><div class="line"></div><div class="line">----------------------------------------------------------------------------------------------------------------</div><div class="line">| Id  | Operation                           | Name                     | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">----------------------------------------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT                    |                          |     1 |    23 |     2   (0)| 00:00:01 |</div><div class="line">|   1 |  TABLE ACCESS BY INDEX ROWID BATCHED| TB_TABLE_LIST            |     1 |    23 |     2   (0)| 00:00:01 |</div><div class="line">|*  2 |   INDEX RANGE SCAN                  | IDX_TB_TABLE_LIST_TBNAME |     1 |       |     1   (0)| 00:00:01 |</div><div class="line">----------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   2 - access(<span class="string">"TABLE_NAME"</span>=<span class="string">'DBMS_SQLPATCH_STATE'</span>)</div><div class="line"></div><div class="line">SQL&gt; SET AUTOTRACE OFF</div><div class="line">SQL&gt; SELECT EXECUTIONS FROM V<span class="variable">$SQLAREA</span> WHERE SQL_TEXT LIKE <span class="string">'SELECT PCT_USED,PCT_FREE FROM TEST_%'</span>;</div><div class="line"></div><div class="line">EXECUTIONS</div><div class="line">----------</div><div class="line">         0</div></pre></td></tr></table></figure></p>
+<p>&emsp;另一种获取SQL真实执行计划的方式是通过10046事件，通过这种方式我们可以看到更细粒度的结果展示，如每一个步骤所执行的逻辑读、物理读和花费的时间等，这对于某些复杂SQL诊断时会比较有用。</p>
+<h4 id="什么是10046事件？"><a href="#什么是10046事件？" class="headerlink" title="什么是10046事件？"></a>什么是10046事件？</h4><p>&emsp;10046 event是ORACLE提供的一个性能分析工具，可以用来跟踪某一个session所执行的SQL语句或者或者PL/SQL语句各个阶段中遇到的等待事件、消耗的逻辑读、物理读、消耗的时间、执行计划等。<br>&emsp;10046 event有以下9个有效跟踪级别：</p>
+<ol>
+<li>level 1 启用标准SQL_TRACE的功能，包含时间消耗、处理的行数，物理读和写的数、执行计划等</li>
+<li>level 4 在level 1 的基础上多了变量绑定</li>
+<li>level 8 在level 1 的基础上多了等待事件</li>
+<li>level 12 即level 4+level 8</li>
+<li>level 16 level 1的基础上为每一次执行生成执行计划信息(11.1之后的版本才有)</li>
+<li>level 28 level 4+level 8+level 16</li>
+<li>level 32 比level 1少了执行计划信息(11.1之后的版本才有)</li>
+<li>level 64 在level 1的基础上，如果某游标比上次执行的时间多消耗了1min以上则还会生成执行计划信息(11.2之后的版本才有)</li>
+<li>level 68 即leve4 + level 64</li>
+</ol>
+<h4 id="如何使用？"><a href="#如何使用？" class="headerlink" title="如何使用？"></a>如何使用？</h4><p>通过以下三个步骤我们可以通过10046 event来获取执行计划： </p>
+<ol>
+<li>在当前session激活10046 event，有以下两种方式：<blockquote>
+<p>alter session set events ‘10046 trace name context forever,level 12’<br>oradebug setmypid<br>oradebug event 10046 trace name context forever,level 12</p>
+</blockquote>
+</li>
+<li>执行目标SQL</li>
+<li>在当前session关闭10046 event：<blockquote>
+<p>alter session set events ‘10046 trace name context off’<br>oradebug event 10046 trace name context off</p>
+</blockquote>
+</li>
+</ol>
+<p>&emsp;推荐使用oradebug的方式，这样可以通过oradebug tracefile_name来获取tracefile的绝对路径。对于直接获取到的tracefile不直观，看起来非常吃力，可以通过ORACLE提供的tkprof来对得到的trace文件进行翻译</p>
+<h4 id="案例操作"><a href="#案例操作" class="headerlink" title="案例操作"></a>案例操作</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">SQL&gt; oradebug setmypid</div><div class="line">已处理的语句</div><div class="line">SQL&gt; oradebug event 10046 trace name context forever,level 12</div><div class="line">已处理的语句</div><div class="line"></div><div class="line">SQL&gt; select a.table_name,a.pct_used,b.column_name from test_env.tb_table_list a,test_env.tb_column_list b</div><div class="line">     <span class="built_in">where</span> a.owner=b.owner</div><div class="line">     and a.table_name=b.table_name</div><div class="line">     and b.table_name=<span class="string">'DBMS_SQLPATCH_STATE'</span>;</div><div class="line"></div><div class="line">.</div><div class="line">.</div><div class="line">.</div><div class="line">.</div><div class="line">DBMS_SQLPATCH_STATE     40   S_CACHED_LSINVENTORY</div><div class="line"></div><div class="line"></div><div class="line">已选择 27 行。</div><div class="line"></div><div class="line">SQL&gt; oradebug tracefile_name</div><div class="line">C:\APP\ADMINISTRATOR\diag\rdbms\orcl\orcl\trace\orcl_ora_3016.trc</div><div class="line">SQL&gt; oradebug event 10046 trace name context off</div><div class="line">已处理的语句</div><div class="line">SQL&gt;</div><div class="line"></div><div class="line"></div><div class="line">C:\Users\Administrator&gt;tkprof C:\APP\ADMINISTRATOR\diag\rdbms\orcl\orcl\trace\orcl_ora_2548.trc C:\explain_orcl_ora_2548.txt</div><div class="line"></div><div class="line">TKPROF: Release 18.0.0.0.0 - Development on 星期五 4月 5 16:05:18 2019</div><div class="line"></div><div class="line">Copyright (c) 1982, 2018, Oracle and/or its affiliates.  All rights reserved.</div></pre></td></tr></table></figure>
+<p>翻译后的结果如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div></pre></td><td class="code"><pre><div class="line">********************************************************************************</div><div class="line"></div><div class="line">select a.table_name,a.pct_used,b.column_name from test_env.tb_table_list a,test_env.tb_column_list b</div><div class="line">where a.owner=b.owner</div><div class="line">and a.table_name=b.table_name</div><div class="line">and b.table_name=&apos;DBMS_SQLPATCH_STATE&apos;</div><div class="line"></div><div class="line">call     count       cpu    elapsed       disk      query    current        rows</div><div class="line">------- ------  -------- ---------- ---------- ---------- ----------  ----------</div><div class="line">Parse        1      0.01       0.00          0          0          0           0</div><div class="line">Execute      1      0.00       0.00          0          0          0           0</div><div class="line">Fetch        3      0.01       0.07        856        863          0          27</div><div class="line">------- ------  -------- ---------- ---------- ---------- ----------  ----------</div><div class="line">total        5      0.03       0.08        856        863          0          27</div><div class="line"></div><div class="line">Misses in library cache during parse: 1</div><div class="line">Optimizer mode: ALL_ROWS</div><div class="line">Parsing user id: SYS</div><div class="line">Number of plan statistics captured: 1</div><div class="line"></div><div class="line">Rows (1st) Rows (avg) Rows (max)  Row Source Operation</div><div class="line">---------- ---------- ----------  ---------------------------------------------------</div><div class="line">        27         27         27  HASH JOIN  (cr=863 pr=856 pw=0 time=78538 us starts=1 cost=246 size=63 card=1)</div><div class="line">         1          1          1   TABLE ACCESS FULL TB_TABLE_LIST (cr=101 pr=99 pw=0 time=23646 us starts=1 cost=31 size=26 card=1)</div><div class="line">        27         27         27   TABLE ACCESS FULL TB_COLUMN_LIST (cr=762 pr=757 pw=0 time=42700 us starts=1 cost=214 size=444 card=12)</div><div class="line"></div><div class="line"></div><div class="line">Elapsed times include waiting on following events:</div><div class="line">  Event waited on                             Times   Max. Wait  Total Waited</div><div class="line">  ----------------------------------------   Waited  ----------  ------------</div><div class="line">  Disk file operations I/O                        2        0.00          0.00</div><div class="line">  SQL*Net message to client                       3        0.00          0.00</div><div class="line">  db file sequential read                         2        0.01          0.01</div><div class="line">  db file scattered read                         36        0.01          0.04</div><div class="line">  SQL*Net message from client                     3        6.98          7.06</div><div class="line">  PGA memory operation                            1        0.00          0.00</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">********************************************************************************</div><div class="line"></div><div class="line">OVERALL TOTALS FOR ALL NON-RECURSIVE STATEMENTS</div><div class="line"></div><div class="line">call     count       cpu    elapsed       disk      query    current        rows</div><div class="line">------- ------  -------- ---------- ---------- ---------- ----------  ----------</div><div class="line">Parse        1      0.01       0.00          0          0          0           0</div><div class="line">Execute      1      0.00       0.00          0          0          0           0</div><div class="line">Fetch        3      0.01       0.07        856        863          0          27</div><div class="line">------- ------  -------- ---------- ---------- ---------- ----------  ----------</div><div class="line">total        5      0.03       0.08        856        863          0          27</div><div class="line"></div><div class="line">Misses in library cache during parse: 1</div><div class="line"></div><div class="line">Elapsed times include waiting on following events:</div><div class="line">  Event waited on                             Times   Max. Wait  Total Waited</div><div class="line">  ----------------------------------------   Waited  ----------  ------------</div><div class="line">  SQL*Net message to client                       6        0.00          0.00</div><div class="line">  SQL*Net message from client                     6       80.00        104.95</div><div class="line">  db file sequential read                         2        0.01          0.01</div><div class="line">  PGA memory operation                            1        0.00          0.00</div><div class="line">  Disk file operations I/O                        5        0.00          0.00</div><div class="line">  db file scattered read                         36        0.01          0.04</div><div class="line"></div><div class="line"></div><div class="line">OVERALL TOTALS FOR ALL RECURSIVE STATEMENTS</div><div class="line"></div><div class="line">call     count       cpu    elapsed       disk      query    current        rows</div><div class="line">------- ------  -------- ---------- ---------- ---------- ----------  ----------</div><div class="line">Parse        2      0.01       0.00          0          0          0           0</div><div class="line">Execute    124      0.01       0.04          0          0          0           0</div><div class="line">Fetch      233      0.01       0.04         10        399          0         422</div><div class="line">------- ------  -------- ---------- ---------- ---------- ----------  ----------</div><div class="line">total      359      0.04       0.08         10        399          0         422</div><div class="line"></div><div class="line">Misses in library cache during parse: 2</div><div class="line">Misses in library cache during execute: 15</div><div class="line"></div><div class="line">Elapsed times include waiting on following events:</div><div class="line">  Event waited on                             Times   Max. Wait  Total Waited</div><div class="line">  ----------------------------------------   Waited  ----------  ------------</div><div class="line">  db file sequential read                        10        0.00          0.04</div><div class="line">  PGA memory operation                            7        0.00          0.00</div><div class="line">  Disk file operations I/O                        1        0.00          0.00</div><div class="line"></div><div class="line">    1  user  SQL statements in session.</div><div class="line">   19  internal SQL statements in session.</div><div class="line">   20  SQL statements in session.</div><div class="line">********************************************************************************</div><div class="line">Trace file: C:\APP\ADMINISTRATOR\diag\rdbms\orcl\orcl\trace\orcl_ora_2548.trc</div><div class="line">Trace file compatibility: 12.2.0.0</div><div class="line">Sort options: default</div><div class="line"></div><div class="line">       1  session in tracefile.</div><div class="line">       1  user  SQL statements in trace file.</div><div class="line">      19  internal SQL statements in trace file.</div><div class="line">      20  SQL statements in trace file.</div><div class="line">      20  unique SQL statements in trace file.</div><div class="line">    2176  lines in trace file.</div><div class="line">       0  elapsed seconds in trace file.</div></pre></td></tr></table></figure></p>
+<p>&emsp;从结果中可以看到SQL的执行计划、每个阶段(Parse、Execute、Fetch)cpu时间返回的行数、所涉及等待事件、row source操作的具体情况等详细的信息。当我们通过<code>AUTOTRACE</code>以及<code>DBMS_XPLAN</code>方式无法确定SQL具体性能问题时，10046可以让我们获取到更多详细信息来定位相关性能问题。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ORACLE/" rel="tag"># ORACLE</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/24/ORACLE-Memory-Architecture/" rel="next" title="ORACLE内存结构">
+                <i class="fa fa-chevron-left"></i> ORACLE内存结构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDUwMC8xNzAyNw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是10046事件？"><span class="nav-number">1.</span> <span class="nav-text">什么是10046事件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如何使用？"><span class="nav-number">2.</span> <span class="nav-text">如何使用？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例操作"><span class="nav-number">3.</span> <span class="nav-text">案例操作</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
