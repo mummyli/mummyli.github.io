@@ -1,0 +1,862 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ORACLE,SQL优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;很多时候可能我们都希望CBO能够帮我们生成正确、高效的执行计划，但是很多时候事实并非如此，可能因为各种各样的原因(如，统计信息不正确或者CBO天生的缺陷等)都会导致生成的执行计划特别的低效。之前的一家公司有一台专门用于批量做数据校验清洗的数据库，每次校验清洗完成数据就会清理掉，统计信息经常会发生较大的变更，之前跑得好好的SQL，可能有时候跑5-6个小时都跑不完了，这时候查看执行计划，发">
+<meta name="keywords" content="ORACLE,SQL优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ORACLE里执行计划的稳定">
+<meta property="og:url" content="http://yoursite.com/2019/04/10/oracle-sql-plan-management/index.html">
+<meta property="og:site_name" content="木乃伊、">
+<meta property="og:description" content="&amp;emsp;很多时候可能我们都希望CBO能够帮我们生成正确、高效的执行计划，但是很多时候事实并非如此，可能因为各种各样的原因(如，统计信息不正确或者CBO天生的缺陷等)都会导致生成的执行计划特别的低效。之前的一家公司有一台专门用于批量做数据校验清洗的数据库，每次校验清洗完成数据就会清理掉，统计信息经常会发生较大的变更，之前跑得好好的SQL，可能有时候跑5-6个小时都跑不完了，这时候查看执行计划，发">
+<meta property="og:updated_time" content="2019-04-19T14:57:02.458Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ORACLE里执行计划的稳定">
+<meta name="twitter:description" content="&amp;emsp;很多时候可能我们都希望CBO能够帮我们生成正确、高效的执行计划，但是很多时候事实并非如此，可能因为各种各样的原因(如，统计信息不正确或者CBO天生的缺陷等)都会导致生成的执行计划特别的低效。之前的一家公司有一台专门用于批量做数据校验清洗的数据库，每次校验清洗完成数据就会清理掉，统计信息经常会发生较大的变更，之前跑得好好的SQL，可能有时候跑5-6个小时都跑不完了，这时候查看执行计划，发">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/10/oracle-sql-plan-management/"/>
+
+
+
+
+
+  <title>ORACLE里执行计划的稳定 | 木乃伊、</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">木乃伊、</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不务正业的CODER，当了一个假的DBA</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/10/oracle-sql-plan-management/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="L4J">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="木乃伊、">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ORACLE里执行计划的稳定</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-10T09:30:24+08:00">
+                2019-04-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ORACLE/" itemprop="url" rel="index">
+                    <span itemprop="name">ORACLE</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;很多时候可能我们都希望CBO能够帮我们生成正确、高效的执行计划，但是很多时候事实并非如此，可能因为各种各样的原因(如，统计信息不正确或者CBO天生的缺陷等)都会导致生成的执行计划特别的低效。之前的一家公司有一台专门用于批量做数据校验清洗的数据库，每次校验清洗完成数据就会清理掉，统计信息经常会发生较大的变更，之前跑得好好的SQL，可能有时候跑5-6个小时都跑不完了，这时候查看执行计划，发现不正确的统计信息导致了执行计划的变更。<br><a id="more"></a><br>&emsp;这时候我们就希望数据库中运行的SQL都能有正确、稳定的执行计划，在10g开始的版本中可以通过SQL Profile来稳定执行计划或者在不改变SQL的情况下修改执行计划。11g开始可以使用偏主动的稳定执行计划的手段——SPM(SQL PLAN MANAGEMENT)，保证只有被验证过的执行计划才会被启用。</p>
+<h3 id="SQL-Profile"><a href="#SQL-Profile" class="headerlink" title="SQL Profile"></a>SQL Profile</h3><p>&emsp;SQL Profile是包含特定于SQL语句的辅助统计信息的数据库对象，可以改进优化器基数估计，从而选择更好的执行计划。<br>&emsp;当选择执行计划时优化器会考虑以下信息：</p>
+<ol>
+<li>SQL Profile提供的辅助统计信息</li>
+<li>当时SQL的运行环境，如数据库配置，变量绑定，与优化器相关的统计信息等。</li>
+</ol>
+<p>&emsp;所以，上面两个条件的任意一个发生变化，都有可能导致执行计划的改变。下面看下SQL Profile的一些基本操作以及如何在线进行SQL的调整。</p>
+<h4 id="accepting-sql-profile"><a href="#accepting-sql-profile" class="headerlink" title="accepting sql profile"></a>accepting sql profile</h4><p>&emsp;通过<code>DBMS_SQLTUNE.ACCEPT_SQL_PROFILE</code>存储过程可以接受一个SQL Profile，只有在我们接受了一个SQL Profile之后，优化器才能使用他作为产生执行计划的输入。这个存储过程有两个比较重要的参数：</p>
+<ul>
+<li>profile_type<br>这个参数用于控制是否改变并行执行行为，<code>REGULAR_PROFILE</code>不更改为并行执行，<code>PX_PROFLE</code>用于更改并行执行的SQL Profile。</li>
+<li>force_match<br>该参数用于控制SQL语句匹配，有两个值——TRUE和FALSE。对于SQL语句中where条件的字面值，当force_match=TRUE时，会将其替换为变量绑定，所以当字面值不同时也可以重用该SQL Profile。值为FALSE时，where条件的字面值则不会替换。</li>
+</ul>
+<p>下面是ACCEPT_SQL_PROFILE的例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">DECLARE</div><div class="line">  my_sqlprofile_name VARCHAR2(30);</div><div class="line">BEGIN</div><div class="line">  my_sqlprofile_name := DBMS_SQLTUNE.ACCEPT_SQL_PROFILE ( </div><div class="line">    task_name    =&gt; &apos;STA_SPECIFIC_EMP_TASK&apos;</div><div class="line">,   name         =&gt; &apos;my_sql_profile&apos;</div><div class="line">,   profile_type =&gt; DBMS_SQLTUNE.PX_PROFILE</div><div class="line">,   force_match  =&gt; true </div><div class="line">);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<h4 id="Listing-SQL-Profile"><a href="#Listing-SQL-Profile" class="headerlink" title="Listing SQL Profile"></a>Listing SQL Profile</h4><p>&emsp;可以通过<code>DBA_SQL_PROFILES</code>数据字典视图来查看存储在数据库中的SQL Profile。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT NAME,CATEGORY,SQL_TEXT,FORCE_MATCHING,STATUS FROM DBA_SQL_PROFILES;</div><div class="line"></div><div class="line">NAME                           CATEGORY   SQL_TEXT                  FOR STATUS</div><div class="line">------------------------------ ---------- ------------------------- --- --------</div><div class="line">SYS_SQLPROF_016986bccd640000   DEFAULT    select /*+ use_nl(a b) in NO  ENABLED</div><div class="line">                                          dex(b) */a.brwyid,a.yljgd</div><div class="line">                                          m,a.jzlsh,b.mzzddm from t</div><div class="line">                                          est_e</div></pre></td></tr></table></figure></p>
+<h4 id="Altering-SQL-Profile"><a href="#Altering-SQL-Profile" class="headerlink" title="Altering SQL Profile"></a>Altering SQL Profile</h4><p>&emsp;通过<code>ALTER_SQL_PROFILE</code>中的<code>attribute_name</code>参数可以修改SQL Profile相应的参数值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">BEGIN DBMS_SQLTUNE.ALTER_SQL_PROFILE ( </div><div class="line">   name            =&gt;  &apos;my_sql_profile&apos;</div><div class="line">,  attribute_name  =&gt;  &apos;FORCE_MATCH&apos;</div><div class="line">,  value           =&gt;  &apos;TRUE&apos;      </div><div class="line">);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<h4 id="Droping-SQL-Profile"><a href="#Droping-SQL-Profile" class="headerlink" title="Droping SQL Profile"></a>Droping SQL Profile</h4><p>&emsp;通过<code>DROP_SQL_PROFILE</code>存储过程可以删除特定的SQL Profile<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">BEGIN</div><div class="line">  DBMS_SQLTUNE.DROP_SQL_PROFILE ( </div><div class="line">    name =&gt; &apos;my_sql_profile&apos; </div><div class="line">);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure></p>
+<h4 id="通过SQL-Profile调整线上SQL执行计划"><a href="#通过SQL-Profile调整线上SQL执行计划" class="headerlink" title="通过SQL Profile调整线上SQL执行计划"></a>通过SQL Profile调整线上SQL执行计划</h4><p>&emsp;通过手工创建SQL Profile的方式，可以在不更改目标SQL的SQL文本的情况下修改SQL的执行计划，而且可以很好的稳定SQL的执行计划。<br>&emsp;下面是手工创建SQL Profile的例子,在TEST_ENV.TB_TABLE_LIST的列TABLE_NAME上有一个名为IDX_TB_TABLE_LIST_TBNAME的B树索引：<br>1、首先加一个全表扫描的HINTS来执行下面的SQL，模拟线上的一个执行低效的SQL，并查看其执行计划。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT /*+FULL(T)*/ TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">------------------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">SQL_ID  1a319c1c2b3rz, child number 0</div><div class="line">-------------------------------------</div><div class="line">SELECT /*+FULL(T)*/ TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 1475094007</div><div class="line"></div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">| Id  | Operation         | Name          | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT  |               |       |       |    31 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">|*  1 |  TABLE ACCESS FULL| TB_TABLE_LIST |     1 |    18 |    31   (0)| 00:00:01 |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      FULL(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot;)</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - filter(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - (rowset=256) &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line"></div><div class="line">已选择 43 行。</div></pre></td></tr></table></figure></p>
+<p>2、然后加入走索引的HINTS来更正这个SQL的执行计划，得到下面的执行计划相关信息，此时我们就需要用这个执行计划来替换掉上面走全表扫描的SQL的执行计划。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT /*+ INDEX(T IDX_TB_TABLE_LIST_TBNAME) */TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">------------------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">SQL_ID  44j1ysb93cwdq, child number 0</div><div class="line">-------------------------------------</div><div class="line">SELECT /*+ INDEX(T IDX_TB_TABLE_LIST_TBNAME) */TABLE_NAME FROM</div><div class="line">TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 3318876060</div><div class="line"></div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">| Id  | Operation        | Name                     | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT |                          |       |       |     1 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">|*  1 |  INDEX RANGE SCAN| IDX_TB_TABLE_LIST_TBNAME |     1 |    18 |     1   (0)| 00:00:01 |</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      INDEX(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot; (&quot;TB_TABLE_LIST&quot;.&quot;TABLE_NAME&quot;))</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - access(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line"></div><div class="line">已选择 43 行。</div></pre></td></tr></table></figure></p>
+<p>3、下面查看对应的SQL_ID。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT SQL_TEXT,SQL_ID FROM V$SQLAREA WHERE SQL_TEXT LIKE &apos;%TABLE_NAME FROM TEST_ENV.TB_TABLE%&apos;;</div><div class="line"></div><div class="line">SQL_TEXT                  SQL_ID</div><div class="line">------------------------- -------------</div><div class="line">SELECT /*+ INDEX(T IDX_TB 44j1ysb93cwdq</div><div class="line">_TABLE_LIST_TBNAME) */TAB</div><div class="line">LE_NAME FROM TEST_ENV.TB_</div><div class="line">TABLE_LIST T WHERE TABLE_</div><div class="line">NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SELECT SQL_TEXT,SQL_ID FR g4v1sg4ycf96y</div><div class="line">OM V$SQLAREA WHERE SQL_TE</div><div class="line">XT LIKE &apos;%TABLE_NAME FROM</div><div class="line"> TEST_ENV.TB_TABLE%&apos;</div><div class="line"></div><div class="line"></div><div class="line">SQL_TEXT                  SQL_ID</div><div class="line">------------------------- -------------</div><div class="line">SELECT /*+FULL(T)*/ TABLE 1a319c1c2b3rz</div><div class="line">_NAME FROM TEST_ENV.TB_TA</div><div class="line">BLE_LIST T WHERE TABLE_NA</div><div class="line">ME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure></p>
+<p>4、创建SQL PROFILE，用正确的执行计划的OUT LINE DATA来创建SQL Profile<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">SQL&gt; declare</div><div class="line">  2     v_hints sys.sqlprof_attr;</div><div class="line">  3     clsql_text clob;</div><div class="line">  4  begin</div><div class="line">  5     v_hints := sys.sqlprof_attr(&apos;BEGIN_OUTLINE_DATA&apos;,</div><div class="line">  6        &apos;IGNORE_OPTIM_EMBEDDED_HINTS&apos;,</div><div class="line">  7        &apos;OPTIMIZER_FEATURES_ENABLE(&apos;&apos;18.1.0&apos;&apos;)&apos;,</div><div class="line">  8        &apos;DB_VERSION(&apos;&apos;18.1.0&apos;&apos;)&apos;,</div><div class="line">  9        &apos;ALL_ROWS&apos;,</div><div class="line"> 10        &apos;OUTLINE_LEAF(@&quot;SEL$1&quot;)&apos;,</div><div class="line"> 11        &apos;INDEX(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot; (&quot;TB_TABLE_LIST&quot;.&quot;TABLE_NAME&quot;))&apos;,</div><div class="line"> 12        &apos;END_OUTLINE_DATA&apos;);</div><div class="line"> 13</div><div class="line"> 14      select sql_fulltext into clsql_text from v$sqlarea where sql_id=&apos;1a319c1c2b3rz&apos;;</div><div class="line"> 15</div><div class="line"> 16      dbms_sqltune.import_sql_profile(clsql_text,v_hints,&apos;my_sql_profile&apos;,force_match=&gt;true,replace=&gt;true);</div><div class="line"> 17  end;</div><div class="line"> 18  /</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div></pre></td></tr></table></figure></p>
+<p>5、最后再来看加FULL这个HINTS的SQL语句的执行计划，可以看到此时已经是做的索引范围扫描了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT /*+FULL(T)*/ TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">------------------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">SQL_ID  1a319c1c2b3rz, child number 0</div><div class="line">-------------------------------------</div><div class="line">SELECT /*+FULL(T)*/ TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 3318876060</div><div class="line"></div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">| Id  | Operation        | Name                     | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT |                          |       |       |     1 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">|*  1 |  INDEX RANGE SCAN| IDX_TB_TABLE_LIST_TBNAME |     1 |    18 |     1   (0)| 00:00:01 |</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      INDEX(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot; (&quot;TB_TABLE_LIST&quot;.&quot;TABLE_NAME&quot;))</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - access(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line">Note</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------</div><div class="line">-----</div><div class="line">   - SQL profile my_sql_profile used for this statement</div><div class="line"></div><div class="line"></div><div class="line">已选择 47 行。</div></pre></td></tr></table></figure></p>
+<h3 id="SPM"><a href="#SPM" class="headerlink" title="SPM"></a>SPM</h3><p>&emsp;SQL Plan Management(SPM)可以有效避免执行计划变更而导致的性能下降的问题，只有被验证和接受的执行计划才是可用的。SPM采用了一种叫SQL PLAN<br>BASELINE的机制，它是一系列被验证性能良好的SQL执行计划的集合。不管SQL Plan Baseline还是SQL Profile都是通过内部使用hints来实现的，他们之间的区别如下：</p>
+<ol>
+<li>SQL Plan BaseLine是一种偏主动的机制，可以在性能问题出现之前就创建SQL基线，避免优化器在未来某个时刻选择次优的执行计划。而SQL Profile只能等到发现SQL的性能问题时，调用SQL Tuning Advisor来对有问题的SQL进行调整。</li>
+<li>SQL Plan Baseline会从新产生一个具体的执行计划，不会随着其他相关统计信息的变更而变更，但是SQL Profile只是为优化器提供一个辅助信息。<br>SQL Plan Baseline的hints会指定生成一个具体的执行计划，但是SQL Profile的hints只是帮助调整优化器错误的计算</li>
+</ol>
+<h4 id="初始化参数配置"><a href="#初始化参数配置" class="headerlink" title="初始化参数配置"></a>初始化参数配置</h4><p>&emsp;可以通过以下两个参数来控制SPM的行为:</p>
+<ul>
+<li>OPTIMIZER_CAPTURE_SQL_PLAN_BASELINES=TRUE|FALSE<br>该参数用于控制是否启用自动捕获SQL Plan Baseline，默认值为FALSE。该参数可以在SESSION或者SYSTEM级别进行修改，修改为TRUE后，ORACLE会对其影响的范围内的所有重复执行的SQL自动捕获其SQL Plan Baseline。对于第一次捕获到的结果，其ENABLED和ACCEPTED的值均为’YES’。当执行计划变更，被再次捕获到时，其ENABLED=YES但是ACCEPTED的值为’NO’，表示该SQL依然会使用第一次捕获到的SQL执行计划。</li>
+<li>OPTIMIZER_USE_SQL_PLAN_BASELINES=TRUE|FALSE<br>该参数用于控制是否启用SQL Plan Baseline，默认值为TRUE，该参数也可以在SESSION和SYSTEM级别设置。</li>
+</ul>
+<h4 id="查看SQL-Plan-Baseline中的执行计划"><a href="#查看SQL-Plan-Baseline中的执行计划" class="headerlink" title="查看SQL Plan Baseline中的执行计划"></a>查看SQL Plan Baseline中的执行计划</h4><p>&emsp;通过数据字典<code>DBA_SQL_PLAN_BASELINES</code>可以查询到存储在数据库中的SQL Plan Baselines，然后使用<code>DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE</code>函数可以查看对应的执行计划。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SELECT SIGNATURE,SQL_TEXT,SQL_HANDLE,PLAN_NAME FROM DBA_SQL_PLAN_BASELINES;</div><div class="line"></div><div class="line">SELECT * from table(DBMS_XPLAN.DISPLAY_SQL_PLAN_BASELINE(&apos;SQL_787830cec4402bdf&apos;,&apos;SQL_PLAN_7hy1htv240ayz01f095c0&apos;,&apos;advanced&apos;));</div></pre></td></tr></table></figure></p>
+<h4 id="批量加载SQL-Plan-Baseline"><a href="#批量加载SQL-Plan-Baseline" class="headerlink" title="批量加载SQL Plan Baseline"></a>批量加载SQL Plan Baseline</h4><p>&emsp;通过DBMS_SPM包提供的相关函数，我们可以从SQL Tuning Set、 Shared SQL Area和Staging Table中加载SQL Plan Baseline。比较常用的是通过Staging Table的方式来进行不同数据库之间SQL Plan Baseline的迁移，比如我们在测试库中调试好了一批SQL，需要将其执行计划导入到生产库中。<br>&emsp;下面是通过Staging Table方式将A库的SQL Plan Baseline迁移到B库的基本流程：</p>
+<ol>
+<li><p>使用DBMS_SPM.CREATE_STGTAB_BASELINE创建中间表。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">BEGIN</div><div class="line">  DBMS_SPM.CREATE_STGTAB_BASELINE (</div><div class="line">    table_name =&gt; &apos;stage1&apos;);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure>
+</li>
+<li><p>将SQL Plan Baseline打包到刚刚创建的中间表stage1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">DECLARE</div><div class="line">  v_plan_cnt NUMBER;</div><div class="line">BEGIN</div><div class="line">  v_plan_cnt := DBMS_SPM.PACK_STGTAB_BASELINE (</div><div class="line">    table_name =&gt; &apos;stage1&apos;</div><div class="line">,   enabled    =&gt; &apos;yes&apos;</div><div class="line">,   creator    =&gt; &apos;spm&apos;</div><div class="line">);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure>
+</li>
+<li><p>将中间表传输到目标数据库中，可以通过数据泵等手段。</p>
+</li>
+<li>在目标库中，将中间表的数据解压。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">DECLARE</div><div class="line">  v_plan_cnt NUMBER;</div><div class="line">BEGIN</div><div class="line">  v_plan_cnt := DBMS_SPM.UNPACK_STGTAB_BASELINE (</div><div class="line">    table_name =&gt; &apos;stage1&apos;</div><div class="line">,   fixed      =&gt; &apos;yes&apos;</div><div class="line">);</div><div class="line">END;</div><div class="line">/</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="删除SQL-Plan-Baseline"><a href="#删除SQL-Plan-Baseline" class="headerlink" title="删除SQL Plan Baseline"></a>删除SQL Plan Baseline</h4><p>&emsp;通过<code>DBMS_SPM.DROP_SQL_PLAN_BASELINE</code>函数可以删除已经保存的SQL Plan Baseline：</p>
+<ol>
+<li>首先通过<code>DBA_SQL_PLAN_BASELINES</code>获取到对应的SQL_HANDLE</li>
+<li>执行删除操作<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SQL&gt; EXEC DBMS_SPM.DROP_SQL_PLAN_BASELINE (sql_handle =&gt; &apos;SQL_b6b0d1c71cd1807b&apos;);</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="实例1——自动捕获"><a href="#实例1——自动捕获" class="headerlink" title="实例1——自动捕获"></a>实例1——自动捕获</h4><ol>
+<li><p>修改<code>optimizer_capture_sql_plan_baselines</code>参数启用自动捕获</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">SQL&gt; alter system flush shared_pool;</div><div class="line"></div><div class="line">系统已更改。</div><div class="line"></div><div class="line">SQL&gt; alter system flush buffer_cache;</div><div class="line"></div><div class="line">系统已更改。</div><div class="line"></div><div class="line">SQL&gt; show parameter sql_plan</div><div class="line"></div><div class="line">NAME                                 TYPE        VALUE</div><div class="line">------------------------------------ ----------- ------------------------------</div><div class="line">optimizer_capture_sql_plan_baselines boolean     FALSE</div><div class="line">optimizer_use_sql_plan_baselines     boolean     TRUE</div><div class="line">SQL&gt; alter system set optimizer_capture_sql_plan_baselines=TRUE;</div><div class="line"></div><div class="line">系统已更改。</div><div class="line"></div><div class="line">SQL&gt; show parameter sql_pla</div><div class="line"></div><div class="line">NAME                                 TYPE        VALUE</div><div class="line">------------------------------------ ----------- ------------------------------</div><div class="line">optimizer_capture_sql_plan_baselines boolean     TRUE</div><div class="line">optimizer_use_sql_plan_baselines     boolean     TRUE</div></pre></td></tr></table></figure>
+</li>
+<li><p>第一次执行SQL，可以看到在DBA_SQL_PLAN_BASELINES中并未查到相应的SQL基线，再次执行才能查询到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SET PAGES 10000 LINES 140</div><div class="line">SQL&gt; SET SERVEROUTPUT ON</div><div class="line">SQL&gt; COL SQL_TEXT FOR A20</div><div class="line">SQL&gt; COL SQL_HANDLE FOR A20</div><div class="line">SQL&gt; COL PLAN_NAME FOR A30</div><div class="line">SQL&gt; COL ORIGIN FOR A12</div><div class="line">SQL&gt; COL TABLE_NAME FOR A20</div><div class="line">SQL&gt; SET LONGC 60535</div><div class="line">SQL&gt; SET LONG 60535</div><div class="line">SQL&gt; SET ECHO ON</div><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED, FIXED, AUTOPURGE FROM   DBA_SQL_PLAN_BASELINES W</div><div class="line">HERE  SQL_TEXT LIKE &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">未选定行</div></pre></td></tr></table></figure>
+</li>
+<li><p>再次执行上面的SQL。查询DBA_SQL_PLAN_BASELINES，对应的SQL Plan Baseline的ACCEPTED和ENABLE的值均为YES。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED, FIXED, AUTOPURGE FROM   DBA_SQL_PLAN_BASELINES W</div><div class="line">HERE  SQL_TEXT LIKE &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC FIX AUT</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- --- --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 AUTO-CAPTURE YES YES NO  YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在表上创建一个TABLE_NAME列的B-TREE索引，然后再次执行上面的SQL语句，通过DBA_SQL_PLAN_BASELINES查询，此时多了一条SQL Plan Baseline，ENABLE=YES，ACCEPTED=NO</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">SQL&gt; CREATE INDEX test_env.IDX_TB_TABLE_LIST_TBNAME ON TEST_ENV.TB_TABLE_LIST(TABLE_NAME);</div><div class="line"></div><div class="line">索引已创建。</div><div class="line"></div><div class="line">SQL&gt; EXEC DBMS_STATS.GATHER_TABLE_STATS(&apos;TEST_ENV&apos;,&apos;TB_TABLE_LIST&apos;,CASCADE=&gt;TRUE);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED, FIXED, AUTOPURGE FROM   DBA_SQL_PLAN_BASELINES W</div><div class="line">HERE  SQL_TEXT LIKE &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC FIX AUT</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- --- --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE YES NO  NO  YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 AUTO-CAPTURE YES YES NO  YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在TABLE_NAME列创建索引之后，根据此列查询，应该是走INDEX RANGE SCAN，但是事实是怎么样呢？看下该语句的执行计划。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">SQL&gt; explain plan for SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">已解释。</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(null, null, &apos;basic +note&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line">--------------------</div><div class="line">Plan hash value: 1475094007</div><div class="line"></div><div class="line">-------------------------------------------</div><div class="line">| Id  | Operation         | Name          |</div><div class="line">-------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT  |               |</div><div class="line">|   1 |  TABLE ACCESS FULL| TB_TABLE_LIST |</div><div class="line">-------------------------------------------</div><div class="line"></div><div class="line">Note</div><div class="line">-----</div><div class="line">   - SQL plan baseline &quot;SQL_PLAN_7hy1htv240ayzc127edb7&quot; used for this statement</div><div class="line"></div><div class="line">已选择 12 行。</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&emsp;可以看到，执行这个SQL依然走的是全表扫描，注意note部分，表示这个执行计划使用了”SQL_PLAN_7hy1htv240ayzc127edb7”的SQL Plan Baseline。表明了SPM可以很好的固定特定SQL的执行计划。</p>
+<ol>
+<li><p>但是实际上此时应该是走索引范围扫描才是最高效的，即”SQL_PLAN_7hy1htv240ayz01f095c0”这个SQL Plan Baseline，如何启用改baseline呢？首先创建一个evole任务，并执行该任务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">SQL&gt; var cnt NUMBER</div><div class="line">SQL&gt; var tk_name VARCHAR2(50)</div><div class="line">SQL&gt; var exe_name VARCHAR2(50)</div><div class="line">SQL&gt; var evol_out CLOB</div><div class="line">SQL&gt; EXEC :tk_name := DBMS_SPM.CREATE_EVOLVE_TASK(sql_handle =&gt; &apos;SQL_787830cec4402bdf&apos;, plan_name  =&gt; &apos;SQL_PLAN_7hy1htv2</div><div class="line">40ayz01f095c0&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; print :tk_name</div><div class="line"></div><div class="line">TK_NAME</div><div class="line">--------</div><div class="line">任务_31</div><div class="line"></div><div class="line">SQL&gt; EXEC :exe_name :=DBMS_SPM.EXECUTE_EVOLVE_TASK(task_name=&gt;:tk_name);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; print :exe_name</div><div class="line"></div><div class="line">EXE_NAME</div><div class="line">--------</div><div class="line">EXEC_151</div></pre></td></tr></table></figure>
+</li>
+<li><p>执行完成之后，通过<code>REPORT_EVOLVE_TASK</code>可以查看到相应的任务报告。Findings部分告诉我们发现了一个比基线效率更高的执行计划，并提供了建议方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div></pre></td><td class="code"><pre><div class="line">SQL&gt; EXEC :evol_out := DBMS_SPM.REPORT_EVOLVE_TASK( task_name=&gt;:tk_name, execution_name=&gt;:exe_name );</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT :evol_out FROM DUAL;</div><div class="line"></div><div class="line">:EVOL_OUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line">--------------------</div><div class="line">GENERAL INFORMATION SECTION</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line"> Task Information:</div><div class="line"> ---------------------------------------------</div><div class="line"> Task Name            : 任务_31</div><div class="line"> Task Owner           : SYS</div><div class="line"> Execution Name       : EXEC_151</div><div class="line"> Execution Type       : SPM EVOLVE</div><div class="line"> Scope                : COMPREHENSIVE</div><div class="line"> Status               : COMPLETED</div><div class="line"> Started              : 04/19/2019 16:45:33</div><div class="line"> Finished             : 04/19/2019 16:45:33</div><div class="line"> Last Updated         : 04/19/2019 16:45:33</div><div class="line"> Global Time Limit    : 2147483646</div><div class="line"> Per-Plan Time Limit  : UNUSED</div><div class="line"> Number of Errors     : 0</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">SUMMARY SECTION</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">  Number of plans processed  : 1</div><div class="line">  Number of findings         : 1</div><div class="line">  Number of recommendations  : 1</div><div class="line">  Number of errors           : 0</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">DETAILS SECTION</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"> Object ID          : 2</div><div class="line"> Test Plan Name     : SQL_PLAN_7hy1htv240ayz01f095c0</div><div class="line"> Base Plan Name     : SQL_PLAN_7hy1htv240ayzc127edb7</div><div class="line"> SQL Handle         : SQL_787830cec4402bdf</div><div class="line"> Parsing Schema     : SYS</div><div class="line"> Test Plan Creator  : SYS</div><div class="line"> SQL Text           : SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">                    TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Execution Statistics:</div><div class="line">-----------------------------</div><div class="line">                    Base Plan                     Test Plan</div><div class="line">                    ----------------------------  ----------------------------</div><div class="line"> Elapsed Time (s):  .000016                       .000001</div><div class="line"> CPU Time (s):      0                             0</div><div class="line"> Buffer Gets:       10                            0</div><div class="line"> Optimizer Cost:    31                            1</div><div class="line"> Disk Reads:        0                             0</div><div class="line"> Direct Writes:     0                             0</div><div class="line"> Rows Processed:    0                             0</div><div class="line"> Executions:        10                            10</div><div class="line"></div><div class="line"></div><div class="line">FINDINGS SECTION</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Findings (1):</div><div class="line">-----------------------------</div><div class="line"> 1. 计划已在 0.03200 秒内验证完毕。此计划符合收益标准, 这是因为其验证性能比基线计划的性能高 50.50000 倍。</div><div class="line"></div><div class="line">Recommendation:</div><div class="line">-----------------------------</div><div class="line"> Consider accepting the plan. Execute</div><div class="line"> dbms_spm.accept_sql_plan_baseline(task_name =&gt; &apos;任务_31&apos;, object_id =&gt; 2,</div><div class="line"> task_owner =&gt; &apos;SYS&apos;);</div><div class="line"></div><div class="line"></div><div class="line">EXPLAIN PLANS SECTION</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Baseline Plan</div><div class="line">-----------------------------</div><div class="line"> Plan Id          : 201</div><div class="line"> Plan Hash Value  : 3240619447</div><div class="line"></div><div class="line">------------------------------------------------------------------------------</div><div class="line">| Id  | Operation           | Name          | Rows | Bytes | Cost | Time     |</div><div class="line">------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT    |               |    1 |    18 |   31 | 00:00:01 |</div><div class="line">| * 1 |   TABLE ACCESS FULL | TB_TABLE_LIST |    1 |    18 |   31 | 00:00:01 |</div><div class="line">------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">------------------------------------------</div><div class="line">* 1 - filter(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line"></div><div class="line">Test Plan</div><div class="line">-----------------------------</div><div class="line"> Plan Id          : 202</div><div class="line"> Plan Hash Value  : 32544192</div><div class="line"></div><div class="line">----------------------------------------------------------------------------------------</div><div class="line">| Id  | Operation          | Name                     | Rows | Bytes | Cost | Time     |</div><div class="line">----------------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT   |                          |    1 |    18 |    1 | 00:00:01 |</div><div class="line">| * 1 |   INDEX RANGE SCAN | IDX_TB_TABLE_LIST_TBNAME |    1 |    18 |    1 | 00:00:01 |</div><div class="line">----------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">------------------------------------------</div><div class="line">* 1 - access(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">---------------------------------------------------------------------------------------------</div></pre></td></tr></table></figure>
+</li>
+<li><p>可以通过上面报告中建议的方式来接受这个计划，也可以使用<code>IMPLEMENT_EVOLVE_TASK</code>函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">SQL&gt; EXEC :cnt := DBMS_SPM.IMPLEMENT_EVOLVE_TASK( task_name=&gt;:tk_name, execution_name=&gt;:exe_name );</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE  SQL_HANDLE=&apos;</div><div class="line">SQL_787830cec4402bdf&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 AUTO-CAPTURE YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>最后我们再来看下执行计划</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">SQL&gt; explain plan for SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">已解释。</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY(null, null, &apos;basic +note&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line">Plan hash value: 3318876060</div><div class="line"></div><div class="line">-----------------------------------------------------</div><div class="line">| Id  | Operation        | Name                     |</div><div class="line">-----------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT |                          |</div><div class="line">|   1 |  INDEX RANGE SCAN| IDX_TB_TABLE_LIST_TBNAME |</div><div class="line">-----------------------------------------------------</div><div class="line"></div><div class="line">Note</div><div class="line">-----</div><div class="line">   - SQL plan baseline &quot;SQL_PLAN_7hy1htv240ayz01f095c0&quot; used for this statement</div><div class="line"></div><div class="line">已选择 12 行。</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&emsp;可以看到此时已经走了索引范围扫描，使用的是”SQL_PLAN_7hy1htv240ayz01f095c0”这个SQL Plan Baseline。当存在多个计划的ACCEPTED和ENABLE的值都为YES的时候，优化器会选择一个成本更低的计划来执行。</p>
+<h4 id="实例2——手工生成"><a href="#实例2——手工生成" class="headerlink" title="实例2——手工生成"></a>实例2——手工生成</h4><p>&emsp;接下来看下手工生成SQL Plan Baseline的方法。其实非常简单，核心就是通过<code>DBMS_STATS.LOAD_PLANS_FROM_CURSOR_CACHE</code>来从Shared SQL Area中加载执行计划。</p>
+<ol>
+<li><p>首先对前面例子生成的内容进行清理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">SQL&gt; alter system set optimizer_capture_sql_plan_baselines=false;</div><div class="line"></div><div class="line">系统已更改。</div><div class="line"></div><div class="line">SQL&gt; show parameter sql_pla</div><div class="line"></div><div class="line">NAME                                 TYPE        VALUE</div><div class="line">------------------------------------ ----------- ------------------------------</div><div class="line">optimizer_capture_sql_plan_baselines boolean     FALSE</div><div class="line">optimizer_use_sql_plan_baselines     boolean     TRUE</div><div class="line"></div><div class="line">SQL&gt; EXEC :cnt :=DBMS_SPM.DROP_SQL_PLAN_BASELINE(&apos;SQL_787830cec4402bdf&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; EXEC :cnt :=DBMS_SPM.DROP_SQL_PLAN_BASELINE(&apos;SQL_061becb140fad607&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; EXEC :cnt :=DBMS_SPM.DROP_SQL_PLAN_BASELINE(&apos;SQL_ecca2815c7166fb6&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; EXEC :cnt :=DBMS_SPM.DROP_SQL_PLAN_BASELINE(&apos;SQL_9049245213a986b3&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; EXEC :cnt :=DBMS_SPM.DROP_SQL_PLAN_BASELINE(&apos;SQL_85372e07e425b213&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; DELETE FROM SQLLOG$;</div><div class="line"></div><div class="line">已删除 9 行。</div><div class="line"></div><div class="line">SQL&gt; commit;</div><div class="line"></div><div class="line">提交完成。</div><div class="line"></div><div class="line">SQL&gt; alter system flush shared_pool;</div><div class="line"></div><div class="line">系统已更改。</div><div class="line"></div><div class="line">SQL&gt; alter system flush buffer_cache;</div><div class="line"></div><div class="line">系统已更改。</div></pre></td></tr></table></figure>
+</li>
+<li><p>执行SQL并查看执行计划</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">SQL_ID  drmkgq2ppg7kg, child number 0</div><div class="line">-------------------------------------</div><div class="line">SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 1475094007</div><div class="line"></div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">| Id  | Operation         | Name          | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT  |               |       |       |    31 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">|*  1 |  TABLE ACCESS FULL| TB_TABLE_LIST |     1 |    18 |    31   (0)| 00:00:01 |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      FULL(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot;)</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - filter(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - (rowset=256) &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line"></div><div class="line">已选择 43 行。</div></pre></td></tr></table></figure>
+</li>
+<li><p>因为此时自动捕获是关闭的，所以不管执行多少次SQL，都没有对应的SQL Plan Baseline。可以手动的将对应的执行计划加入到SQL Plan Baseline中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">SQL&gt; var cnt number</div><div class="line">SQL&gt; exec :cnt := DBMS_SPM.LOAD_PLANS_FROM_CURSOR_CACHE(sql_id=&gt;&apos;drmkgq2ppg7kg&apos;, plan_hash_value=&gt;&apos;1475094007&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE SQL_TEXT LIKE &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 MANUAL-LOAD- YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE                                FROM-CURSOR-</div><div class="line">                     _LIST T WHERE TABLE_                                CACHE</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在TABLE_NAME列上创建索引，然后再次执行SQL，并查看执行计划。可以看到虽然在TABLE_NAME这个列上存在索引，但是已经存在对应SQL语句的一个走全表扫描的执行基线，所以此时依旧走的全表扫描，使用的是刚刚加载进去的’SQL_PLAN_7hy1htv240ayzc127edb7’这个SQL Plan Baseline。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">-----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">SQL_ID  drmkgq2ppg7kg, child number 1</div><div class="line">-------------------------------------</div><div class="line">SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 1475094007</div><div class="line"></div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">| Id  | Operation         | Name          | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT  |               |       |       |    31 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">-----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">|*  1 |  TABLE ACCESS FULL| TB_TABLE_LIST |     1 |    18 |    31   (0)| 00:00:01 |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">-----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      FULL(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot;)</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">-----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - filter(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - (rowset=256) &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line">Note</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">-----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">-----</div><div class="line">   - SQL plan baseline SQL_PLAN_7hy1htv240ayzc127edb7 used for this statement</div><div class="line"></div><div class="line"></div><div class="line">已选择 47 行。</div></pre></td></tr></table></figure>
+</li>
+<li><p>这个时候我们再来查看下DBA_SQL_PLAN_BASELINES这个数据字典，可以看到SPM帮我们自动捕获了一条ENABLE为YES，ACCEPTED为NO的SQL Plan Baseline。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE SQL_TEXT LIKE</div><div class="line"> &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE YES NO</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 MANUAL-LOAD- YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE                                FROM-CURSOR-</div><div class="line">                     _LIST T WHERE TABLE_                                CACHE</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>将’SQL_PLAN_7hy1htv240ayz01f095c0’的ACCEPTED的值改为YES。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">SQL&gt; var result clob;</div><div class="line">SQL&gt; EXEC :result :=DBMS_SPM.EVOLVE_SQL_PLAN_BASELINE(SQL_HANDLE=&gt;&apos;SQL_787830cec4402bdf&apos;, PLAN_NAME=&gt;&apos;SQL_PLAN_7hy1htv24</div><div class="line">0ayz01f095c0&apos;, VERIFY=&gt;&apos;NO&apos;, COMMIT=&gt;&apos;YES&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE SQL_TEXT LIKE</div><div class="line"> &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 MANUAL-LOAD- YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE                                FROM-CURSOR-</div><div class="line">                     _LIST T WHERE TABLE_                                CACHE</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>再次执行SQL，此时使用了’SQL_PLAN_7hy1htv240ayz01f095c0’这个SQL Plan Baseline了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">SQL_ID  drmkgq2ppg7kg, child number 0</div><div class="line">-------------------------------------</div><div class="line">SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 3318876060</div><div class="line"></div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">| Id  | Operation        | Name                     | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT |                          |       |       |     1 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">|*  1 |  INDEX RANGE SCAN| IDX_TB_TABLE_LIST_TBNAME |     1 |    18 |     1   (0)| 00:00:01 |</div><div class="line">---------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      INDEX(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot; (&quot;TB_TABLE_LIST&quot;.&quot;TABLE_NAME&quot;))</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - access(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line">Note</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">-----</div><div class="line">   - SQL plan baseline SQL_PLAN_7hy1htv240ayz01f095c0 used for this statement</div><div class="line"></div><div class="line"></div><div class="line">已选择 47 行。</div></pre></td></tr></table></figure>
+</li>
+<li><p>前面的SQL都是没有HINTS的，有时候我们需加入HINTS对SQL的执行计划进行调整。如何用加入了hints的SQL执行计划来替换之前的SQL，生成新的SQL Plan Baseline呢？首先删除之前做全表扫描的SQL Plan Baseline，然后加入一个FULL的hints来执行SQL，此时SQL_ID和之前是不同的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">SQL&gt; exec :cnt :=DBMS_SPM.DROP_SQL_PLAN_BASELINE (sql_handle=&gt;&apos;SQL_787830cec4402bdf&apos;, plan_name=&gt;&apos;SQL_PLAN_7hy1htv240ayz</div><div class="line">c127edb7&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT /*+FULL(T)*/ TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">SQL_ID  1a319c1c2b3rz, child number 0</div><div class="line">-------------------------------------</div><div class="line">SELECT /*+FULL(T)*/ TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 1475094007</div><div class="line"></div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">| Id  | Operation         | Name          | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT  |               |       |       |    31 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">|*  1 |  TABLE ACCESS FULL| TB_TABLE_LIST |     1 |    18 |    31   (0)| 00:00:01 |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      FULL(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot;)</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">----------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - filter(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - (rowset=256) &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line"></div><div class="line">已选择 43 行。</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&emsp;此时从索引范围扫描变成了全表扫描，SQL_ID为1a319c1c2b3rz，PLAN_HASH_VALUE为1475094007</p>
+<ol>
+<li><p>此时的DBA_SQL_PLAN_BASELINES依然之后刚刚那一条记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE SQL_TEXT LIKE</div><div class="line"> &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>现在用上述改写后的SQL的新的执行计划来手工生成SQL Plan Baseline</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">SQL&gt; exec :cnt := dbms_spm.load_plans_from_cursor_cache(sql_id =&gt; &apos;1a319c1c2b3rz&apos;, plan_hash_value=&gt;1475094007, sql_handle=&gt;&apos;SQL_787830cec4402bdf&apos;)</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE SQL_TEXT LIKE</div><div class="line"> &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 MANUAL-LOAD- YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE                                FROM-CURSOR-</div><div class="line">                     _LIST T WHERE TABLE_                                CACHE</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>由于此时所对应的SQL Plan Baseline的ENABLED和ACCEPTED的值都为YES，我们将之前的走索引范围扫描的ENABLED属性改为NO，然后执行SQL语句。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div></pre></td><td class="code"><pre><div class="line">SQL&gt; EXEC :CNT := DBMS_SPM.ALTER_SQL_PLAN_BASELINE(SQL_HANDLE=&gt;&apos;SQL_787830cec4402bdf&apos;, PLAN_NAME=&gt;&apos;SQL_PLAN_7hy1htv240ay</div><div class="line">z01f095c0&apos;, ATTRIBUTE_NAME=&gt;&apos;ENABLED&apos;, ATTRIBUTE_VALUE=&gt;&apos;NO&apos;);</div><div class="line"></div><div class="line">PL/SQL 过程已成功完成。</div><div class="line"></div><div class="line">SQL&gt; SELECT SQL_HANDLE, SQL_TEXT, PLAN_NAME, ORIGIN, ENABLED, ACCEPTED FROM   DBA_SQL_PLAN_BASELINES WHERE SQL_TEXT LIKE</div><div class="line"> &apos;%TEST_ENV.TB_TABLE_LIST%&apos;;</div><div class="line"></div><div class="line">SQL_HANDLE           SQL_TEXT             PLAN_NAME                      ORIGIN       ENA ACC</div><div class="line">-------------------- -------------------- ------------------------------ ------------ --- ---</div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayz01f095c0 AUTO-CAPTURE NO  YES</div><div class="line">                     OM TEST_ENV.TB_TABLE</div><div class="line">                     _LIST T WHERE TABLE_</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL_787830cec4402bdf SELECT TABLE_NAME FR SQL_PLAN_7hy1htv240ayzc127edb7 MANUAL-LOAD- YES YES</div><div class="line">                     OM TEST_ENV.TB_TABLE                                FROM-CURSOR-</div><div class="line">                     _LIST T WHERE TABLE_                                CACHE</div><div class="line">                     NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">SQL&gt; SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE TABLE_NAME=&apos;ACCESS$&apos;;</div><div class="line"></div><div class="line">TABLE_NAME</div><div class="line">--------------------</div><div class="line">ACCESS$</div><div class="line"></div><div class="line">SQL&gt; SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, &apos;advanced&apos;));</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">SQL_ID  drmkgq2ppg7kg, child number 1</div><div class="line">-------------------------------------</div><div class="line">SELECT TABLE_NAME FROM TEST_ENV.TB_TABLE_LIST T WHERE</div><div class="line">TABLE_NAME=&apos;ACCESS$&apos;</div><div class="line"></div><div class="line">Plan hash value: 1475094007</div><div class="line"></div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">| Id  | Operation         | Name          | Rows  | Bytes | Cost (%CPU)| Time     |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line">|   0 | SELECT STATEMENT  |               |       |       |    31 (100)|          |</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">|*  1 |  TABLE ACCESS FULL| TB_TABLE_LIST |     1 |    18 |    31   (0)| 00:00:01 |</div><div class="line">-----------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Query Block Name / Object Alias (identified by operation id):</div><div class="line">-------------------------------------------------------------</div><div class="line"></div><div class="line">   1 - SEL$1 / T@SEL$1</div><div class="line"></div><div class="line">Outline Data</div><div class="line">-------------</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">  /*+</div><div class="line">      BEGIN_OUTLINE_DATA</div><div class="line">      IGNORE_OPTIM_EMBEDDED_HINTS</div><div class="line">      OPTIMIZER_FEATURES_ENABLE(&apos;18.1.0&apos;)</div><div class="line">      DB_VERSION(&apos;18.1.0&apos;)</div><div class="line">      ALL_ROWS</div><div class="line">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</div><div class="line">      FULL(@&quot;SEL$1&quot; &quot;T&quot;@&quot;SEL$1&quot;)</div><div class="line">      END_OUTLINE_DATA</div><div class="line">  */</div><div class="line"></div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">Predicate Information (identified by operation id):</div><div class="line">---------------------------------------------------</div><div class="line"></div><div class="line">   1 - filter(&quot;TABLE_NAME&quot;=&apos;ACCESS$&apos;)</div><div class="line"></div><div class="line">Column Projection Information (identified by operation id):</div><div class="line">-----------------------------------------------------------</div><div class="line"></div><div class="line">   1 - (rowset=256) &quot;TABLE_NAME&quot;[VARCHAR2,128]</div><div class="line"></div><div class="line">Note</div><div class="line"></div><div class="line">PLAN_TABLE_OUTPUT</div><div class="line">------------------------------------------------------------------------------------------------------------------------</div><div class="line"></div><div class="line">-----</div><div class="line">   - SQL plan baseline SQL_PLAN_7hy1htv240ayzc127edb7 used for this statement</div><div class="line"></div><div class="line"></div><div class="line">已选择 47 行。</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&emsp;可以看到此时的执行计划就是刚刚加HINTS的SQL语句的执行计划了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ORACLE/" rel="tag"># ORACLE</a>
+          
+            <a href="/tags/SQL优化/" rel="tag"># SQL优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/09/10046-event-and-sql-plan/" rel="next" title="通过10046 event来获取真实的执行计划">
+                <i class="fa fa-chevron-left"></i> 通过10046 event来获取真实的执行计划
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MDUwMC8xNzAyNw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/header.jpg"
+               alt="L4J" />
+          <p class="site-author-name" itemprop="name">L4J</p>
+           
+              <p class="site-description motion-element" itemprop="description">不务正业的CODER，当了一个假的DBA</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-Profile"><span class="nav-number">1.</span> <span class="nav-text">SQL Profile</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#accepting-sql-profile"><span class="nav-number">1.1.</span> <span class="nav-text">accepting sql profile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Listing-SQL-Profile"><span class="nav-number">1.2.</span> <span class="nav-text">Listing SQL Profile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Altering-SQL-Profile"><span class="nav-number">1.3.</span> <span class="nav-text">Altering SQL Profile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Droping-SQL-Profile"><span class="nav-number">1.4.</span> <span class="nav-text">Droping SQL Profile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通过SQL-Profile调整线上SQL执行计划"><span class="nav-number">1.5.</span> <span class="nav-text">通过SQL Profile调整线上SQL执行计划</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SPM"><span class="nav-number">2.</span> <span class="nav-text">SPM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化参数配置"><span class="nav-number">2.1.</span> <span class="nav-text">初始化参数配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看SQL-Plan-Baseline中的执行计划"><span class="nav-number">2.2.</span> <span class="nav-text">查看SQL Plan Baseline中的执行计划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#批量加载SQL-Plan-Baseline"><span class="nav-number">2.3.</span> <span class="nav-text">批量加载SQL Plan Baseline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除SQL-Plan-Baseline"><span class="nav-number">2.4.</span> <span class="nav-text">删除SQL Plan Baseline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例1——自动捕获"><span class="nav-number">2.5.</span> <span class="nav-text">实例1——自动捕获</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例2——手工生成"><span class="nav-number">2.6.</span> <span class="nav-text">实例2——手工生成</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" style="text-align:center">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="author" itemprop="copyrightHolder">&nbsp;&nbsp;&nbsp;L4J'blog</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
