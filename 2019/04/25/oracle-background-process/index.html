@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="&amp;emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle">
+<meta name="description" content="&amp;emsp;回顾了一下ORACLE后台进程相关的知识，写篇博客记录一下。&amp;emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在L">
 <meta name="keywords" content="ORACLE,ORACLE基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ORACLE的后台进程">
 <meta property="og:url" content="http://yoursite.com/2019/04/25/oracle-background-process/index.html">
 <meta property="og:site_name" content="木乃伊、">
-<meta property="og:description" content="&amp;emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle">
-<meta property="og:updated_time" content="2019-04-25T04:54:28.998Z">
+<meta property="og:description" content="&amp;emsp;回顾了一下ORACLE后台进程相关的知识，写篇博客记录一下。&amp;emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在L">
+<meta property="og:updated_time" content="2019-04-25T04:59:44.523Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ORACLE的后台进程">
-<meta name="twitter:description" content="&amp;emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle">
+<meta name="twitter:description" content="&amp;emsp;回顾了一下ORACLE后台进程相关的知识，写篇博客记录一下。&amp;emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在L">
 
 
 
@@ -367,7 +367,7 @@
       
 
       
-        <p>&emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle数据库模型才开始让oracle数据库可以作为操作系统线程在单独的地址空间运行，可以通过将系统参数THREADED_EXECUTION设置为TRUE，让数据库运行在线程模式。<br><a id="more"></a><br>&emsp;ORACLE进程架构可以分为客户端进程和服务端进程。服务端进程又包含了server process，background process和作为server process与background process辅助的slave process。通过V$PROCESS可以查看oracle后台进程对应的操作系统线程的线程ID和进程ID。下面主要对后台进程进行了一个简单的归纳。</p>
+        <p>&emsp;回顾了一下ORACLE后台进程相关的知识，写篇博客记录一下。<br>&emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle数据库模型才开始让oracle数据库可以作为操作系统线程在单独的地址空间运行，可以通过将系统参数THREADED_EXECUTION设置为TRUE，让数据库运行在线程模式。<br><a id="more"></a><br>&emsp;ORACLE进程架构可以分为客户端进程和服务端进程。服务端进程又包含了server process，background process和作为server process与background process辅助的slave process。通过V$PROCESS可以查看oracle后台进程对应的操作系统线程的线程ID和进程ID。下面主要对后台进程进行了一个简单的归纳。</p>
 <h4 id="1-Process-Monitor-Process-PMON-Group"><a href="#1-Process-Monitor-Process-PMON-Group" class="headerlink" title="1.Process Monitor Process (PMON) Group"></a>1.Process Monitor Process (PMON) Group</h4><p>&emsp;其中包含了三类后台进程PMON, Cleanup Main Process (CLMN), 和 Cleanup Helper Processes (CLnn)。主要负责监控以及清理其他的进程，在某些情况下PMON进程组也负责对损坏的不可恢复的资源进行隔离，避免数据库实例关闭。<br>&emsp;PMON进程检测后台进程是否终止，并负责对必要的进程尝试恢复。PMON会将清理工作委托给CLMN进程作为清理工作的主进程，CLMN会周期性的去清理中断的进程、会话、事务、网络连接、空闲回话以及超时的网络连接和事务等。CLnn协助CLMN清理中断的进程和会话。CLnn可以存在多个，数量和当前需要清理的工作量和当前清理效率成正比。</p>
 <h4 id="2-Process-Manager-PMAN"><a href="#2-Process-Manager-PMAN" class="headerlink" title="2.Process Manager (PMAN)"></a>2.Process Manager (PMAN)</h4><p>&emsp;负责监视、启动和关闭以下进程：</p>
 <ul>

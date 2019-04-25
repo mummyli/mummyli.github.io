@@ -365,7 +365,7 @@
 
       
         
-          <p>&emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle数据库模型才开始让oracle数据库可以作为操作系统线程在单独的地址空间运行，可以通过将系统参数THREADED_EXECUTION设置为TRUE，让数据库运行在线程模式。<br>
+          <p>&emsp;回顾了一下ORACLE后台进程相关的知识，写篇博客记录一下。<br>&emsp;认识ORACLE实例的两大基础内存结构和后台进程。ORACLE的后台进程架构根据操作系统的不同有可能存在差异。对于WINDOWS系统，ORACLE的后台进程是作为操作系统中进程的执行线程运行的。而LINUX或者UNIX系统，可以是操作系统进程也可以是进程中的执行线程。需要说明的是，在12c之前，ORACLE进程在Linux和UNIX系统中不能作为线程运行；12c开始,多线程Oracle数据库模型才开始让oracle数据库可以作为操作系统线程在单独的地址空间运行，可以通过将系统参数THREADED_EXECUTION设置为TRUE，让数据库运行在线程模式。<br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/04/25/oracle-background-process/#more" rel="contents">
